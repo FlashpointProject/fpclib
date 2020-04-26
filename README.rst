@@ -30,7 +30,7 @@ You can also test the library by running the script directly or with :code:`fpcl
 More Reading
 ============
 
-You can read more about this library in the `official documentation <http://www.example.com>`_.
+You can read more about this library in the `official documentation <https://rawcdn.githack.com/xMGZx/fpclib/master/doc/build/html/index.html>`_.
 
 Usage
 =====
