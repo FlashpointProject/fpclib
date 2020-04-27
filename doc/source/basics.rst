@@ -107,7 +107,7 @@ You can find a full listing of every function in the :class:`Curation` class in 
 Editing Curations
 =================
 
-It's also possible to load and edit existing curations by using the :func:`fpclib.load()` function. Here's an example of that function in action:
+It's also possible to load and edit existing curations by using the :func:`fpclib.load()` function. Here's an example of that function in action::
 
     import fpclib
     

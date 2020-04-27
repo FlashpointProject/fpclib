@@ -338,15 +338,17 @@
 <div class="section" id="editing-curations">
 <h2><a class="toc-backref" href="#id8">Editing Curations</a><a class="headerlink" href="#editing-curations" title="Permalink to this headline">¶</a></h2>
 <p>It’s also possible to load and edit existing curations by using the <a class="reference internal" href="globals.html#fpclib.load" title="fpclib.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">fpclib.load()</span></code></a> function. Here’s an example of that function in action:</p>
-<blockquote>
-<div><p>import fpclib</p>
-<p>c = fpclib.Curation(url=’<a class="reference external" href="https://www.newgrounds.com/portal/view/218014">https://www.newgrounds.com/portal/view/218014</a>’, title=’Interactive Buddy’, cmd=’<a class="reference external" href="http://uploads.ungrounded.net/218000/218014_DAbuddy_latest.swf">http://uploads.ungrounded.net/218000/218014_DAbuddy_latest.swf</a>’)
-c.save(True)</p>
-<p>d = fpclib.load(‘Interactive Buddy’)
-d.logo = ‘<a class="reference external" href="https://picon.ngfiles.com/218000/flash_218014_medium.gif">https://picon.ngfiles.com/218000/flash_218014_medium.gif</a>’
-d.add_app(‘Kongregate v1.02’, ‘<a class="reference external" href="http://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380">http://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380</a>’)
-d.save(True, overwrite=True)</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">fpclib</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">fpclib</span><span class="o">.</span><span class="n">Curation</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;https://www.newgrounds.com/portal/view/218014&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Interactive Buddy&#39;</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="s1">&#39;http://uploads.ungrounded.net/218000/218014_DAbuddy_latest.swf&#39;</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">fpclib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;Interactive Buddy&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">logo</span> <span class="o">=</span> <span class="s1">&#39;https://picon.ngfiles.com/218000/flash_218014_medium.gif&#39;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_app</span><span class="p">(</span><span class="s1">&#39;Kongregate v1.02&#39;</span><span class="p">,</span> <span class="s1">&#39;http://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Note that if you want to mix new curations together with older curations with the same folder name, you have to set <code class="code docutils literal notranslate"><span class="pre">overwrite</span></code> to True.</p>
 </div>
 <div class="section" id="further-reading">
