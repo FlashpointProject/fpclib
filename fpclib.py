@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from collections import OrderedDict
 from bs4 import BeautifulSoup
 from PIL import Image
 from ruamel import yaml
@@ -11,6 +12,8 @@ import re
 import uuid
 import pickle
 import traceback
+import stat
+import shutil
 
 INVALID_CHARS = re.compile(r'[/<>:\"\\\|\?\*\x00-\x1F]')
 """A compiled pattern that matches invalid charaters to be in a folder name.
@@ -51,6 +54,11 @@ EXTENSION = re.compile(r'\.[^/\\]+$')
 """A compiled pattern that matches file extensions.
 
 :code:`re.compile(r'\.[^/\\]+$')`
+"""
+UUID = re.compile(r'[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}')
+"""A compiled pattern that matches uuids.
+
+:code:`re.compile(r'[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}')`
 """
 
 SECURE_PLAYER = 'FPSoftware\\FlashpointSecurePlayer.exe'
@@ -176,19 +184,47 @@ Version        Application Path
 '1103P'        FPSoftware\\\\Shockwave\\\\PJ1103\\\\Projector.exe
 1159 or '1159' FPSoftware\\\\Shockwave\\\\PJ1159\\\\SPR.exe
 '1159D'        FPSoftware\\\\Shockwave\\\\PJ1159\\\\SPRD.exe
-'1159S'        FPSoftware\\\\Shockwave\\\\PJ1159\\\\SPRS.ex
+'1159S'        FPSoftware\\\\Shockwave\\\\PJ1159\\\\SPRS.exe
 '1159P'        FPSoftware\\\\Shockwave\\\\PJ1159\\\\Projector.exe
 ============== ==================================================
 """
 SHOCKWAVE = SHOCKWAVE_PLAYERS[0]
 """A shorthand for :code:`SHOCKWAVE_PLAYERS[0]`"""
 
+
+
+EVERYTHING = int('1111', 2)
+"""A flag for :func:`Curation.save()` that says to save everything. This is equivalent to :code:`META|LOGO|SS|CONTENT`."""
+META = int('1000', 2)
+"""A flag for :func:`Curation.save()` that says to save meta."""
+IMAGES = int('0110', 2)
+"""A flag for :func:`Curation.save()` that says to save images. This is equivalent to :code:`LOGO|SS`."""
+LOGO = int('0100', 2)
+"""A flag for :func:`Curation.save()` that says to save the logo."""
+SS = int('0010', 2)
+"""A flag for :func:`Curation.save()` that says to save the screenshot."""
+CONTENT = int('0001', 2)
+"""A flag for :func:`Curation.save()` that says to save the content of the curation downloaded with :func:`Curation.get_files()`."""
+
+class InvalidCharacterError(ValueError):
+    """An error caused when attempting to read from or write to file name that has invalid characters in it."""
+    pass
+class InvalidFileError(IOError):
+    """An error caused when attempting to read or write to a file that isn't a file (e.g., a directory)."""
+    pass
+class EmptyLocationError(ValueError):
+    """An error caused when attempting to read or write to a file or create a folder with no name."""
+    pass
+
 def test():
     """Tests the library to make sure it works.
     
-    This test will curate "Interactive Buddy" and download the swf file linked in the launch command into the proper place in a folder in the working directory."""
+    This test will curate "Interactive Buddy" and download the swf file linked in the launch command into the proper place in a folder in the working directory.
+    
+    :raises AssertionError: If the test gives back any errors.
+    """
     try:
-        TestCuration().save(False)
+        TestCuration().save(True)
     except KeyboardInterrupt:
         pass
     except:
@@ -219,10 +255,7 @@ def download(url, loc='', name=None):
     
     with requests.get(rurl) as response:
         if loc:
-            try:
-                os.makedirs(loc)
-            except FileExistsError:
-                pass
+            make_dir(loc)
             file_name = os.path.join(loc, file_name)
         with open(file_name, 'wb') as file:
             file.write(response.content)
@@ -235,18 +268,14 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
     :param [str,....] urls: A list of urls pointing to files to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param bool preserve: If True, any files from "web.archive.org" will stay in the "web.archive.org" folder. By default, files are moved to their original domains with any port numbers removed.
-    :param bool keep_vars: If True, files will be saved with all urlvars intact in their file name. This prevents files such as "www.example.com/game.php?id=123" and "www.example.com/game.php?id=321" from overwriting each other. Question marks are replaced with "_".
+    :param bool keep_vars: If True, files will be saved with all urlvars intact in their file name. This prevents files such as "http://www.example.com/game.php?id=123" and "http://www.example.com/game.php?id=321" from overwriting each other. Question marks are replaced with "_".
     :param bool ignore_errs: If True, any errors will be ignored and returned as part of a tuple including the urls that failed alongside each error.
     
     :returns: None or a list of tuples including failed urls and errors.
     """
     if loc:
         cwd = os.getcwd()
-        try:
-            os.makedirs(loc)
-        except FileExistsError:
-            pass
-        os.chdir(loc)
+        make_dir(loc, True)
     errs = []
     try:
         for url in urls:
@@ -270,12 +299,7 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
                 raw = INVALID_CHARS_NO_SLASH.sub('_', raw.replace('://', '.'))
                 
                 with requests.get(rurl) as response:
-                    folder = os.path.dirname(raw)
-                    try:
-                        os.makedirs(folder)
-                    except FileExistsError:
-                        pass
-                    
+                    make_dir(os.path.dirname(raw))
                     with open(raw, 'wb') as file:
                         file.write(response.content)
             except Exception as e:
@@ -320,10 +344,7 @@ def download_image(url, loc='', name=None):
     with requests.get(rurl) as response:
         img = Image.open(BytesIO(response.content))
         if loc:
-            try:
-                os.makedirs(loc)
-            except FileExistsError:
-                pass
+            make_dir(loc)
             file_name = os.path.join(loc, file_name)
     
     img.save(file_name, format='PNG')
@@ -391,7 +412,19 @@ def read(file_name):
     :param str file_name: The location/name of a file in the local file system.
     
     :returns: The contents of the file :code:`file_name` as a string.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    :raises InvalidFileError: If :code:`file_name` is not a file.
+    :raises FileNotFoundError: If :code:`file_name` cannot be found.
     """
+    if not file_name:
+        raise EmptyLocationError('Cannot read a file with no name.')
+    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
+        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
+    if os.path.exists(file_name) and not os.path.isfile(file_name):
+        raise InvalidFileError('"' + file_name + '" is not a file and cannot be read from.')
+    
     with codecs.open(file_name, 'r', 'utf-8') as file:
         contents = file.read()
     return contents
@@ -405,7 +438,19 @@ def read_lines(file_name, ignore_lines=True):
     :param bool ignore_lines: By default this function disregards empty lines at the end of the file. Set this to False to disable that.
     
     :returns: A list of strings containing all of the lines in the file :code:`file_name`.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    :raises InvalidFileError: If :code:`file_name` is not a file.
+    :raises FileNotFoundError: If :code:`file_name` cannot be found.
     """
+    if not file_name:
+        raise EmptyLocationError('Cannot read a file with no name.')
+    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
+        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
+    if os.path.exists(file_name) and not os.path.isfile(file_name):
+        raise InvalidFileError('"' + file_name + '" is not a file and cannot be read from.')
+    
     with codecs.open(file_name, 'r', 'utf-8') as file:
         lines = file.read().replace('\r\n', '\n').replace('\r', '\n').split('\n')
     if ignore_lines:
@@ -427,43 +472,177 @@ def read_table(file_name, delimiter=',', ignore_lines=True):
     :param bool ignore_lines: By default this function disregards empty lines at the end of the file. Set this to False to disable that.
     
     :returns: A two-dimensional list of strings of the content in the file :code:`file_name`.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    :raises InvalidFileError: If :code:`file_name` is not a file.
+    :raises FileNotFoundError: If :code:`file_name` cannot be found.
     """
     return [line.split(delimiter) for line in read_lines(file_name, ignore_lines)]
 
-def write(file_name, contents=''):
+def make_dir(folder, change=False, overwrite=False):
+    """Makes a folder at :code:`folder`, along will all parent folders.
+    
+    It will not throw a FileExistsError if the folder already exists, but will instead return False.
+    
+    :param str folder: A string location to create a folder.
+    :param bool change: If True, this function will set the new folder as the working directory.
+    :param bool overwrite: If True, if there is a non-folder file in the same location as the folder being created, the folder will overwrite this file.
+    
+    :raises EmptyLocationError: If :code:`folder` is an empty string.
+    :raises InvalidCharacterError: If :code:`folder` contains invalid characters.
+    :raises FileExistsError: If a non-folder file exists in the location given by :code:`folder` and overwrite is not set.
+    
+    :returns: True on successful folder creation, False on failure.
+    
+    :note: Even if folder creation fails, if :code:`change` is True, the working directory will still be changed to that folder.
+    """
+    if not folder:
+        raise EmptyLocationError('Cannot create a folder with no name.')
+    if INVALID_CHARS_NO_SLASH.search(folder) is not None:
+        raise InvalidCharacterError('Folder "' + folder + '" contains invalid characters.')
+    
+    r = True
+    if os.path.exists(folder):
+        if not os.path.isdir(folder):
+            if overwrite:
+                os.unlink(folder)
+                os.makedirs(folder)
+            else:
+                raise FileExistsError('Cannot create the folder "' + folder + '" because a non-folder file is there. Use argument "overwrite=True" to overwrite.')
+        else:
+            r = False
+    else:
+        os.makedirs(folder)
+    
+    if change:
+        os.chdir(folder)
+    
+    return r
+
+def delete(file_name):
+    """Deletes the file or folder :code:`file_name` recursively.
+    
+    It will not throw a FileNotFoundError if the file or folder doesn't exist, but will instead return False.
+    
+    :param str file_name: A string location of a file or folder to delete.
+    
+    :returns: True on successful deletion, False on failure.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    """
+    if not file_name:
+        raise EmptyLocationError('Cannot delete a file or folder with no name.')
+    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
+        raise InvalidCharacterError('Folder "' + file_name + '" contains invalid characters.')
+    
+    if os.path.exists(file_name):
+        if os.path.isdir(file_name):
+            shutil.rmtree(file_name)
+        else:
+            os.unlink(file_name)
+        return True
+    else:
+        return False
+
+def write(file_name, contents='', force=False):
     """Writes :code:`contents` to the file :code:`file_name` in utf-8.
+    
+    If the parent directory of this file doesn't exist, it will be automatically created.
     
     :param str file_name: The location/name of a file in the local file system.
     :param str|[str,....] contents: Contents to write to the file :code:`file_name`. If this is an Iterable (and not a string), each item in this will be written to the file :code:`file_name` as a separate line split by line feed (:code:`\\n`) characters.
+    :param bool force: If True, if there is a non-writable file (like a directory) in the same location as the file being written to, the function will overwrite this file.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
     """
+    if not file_name:
+        raise EmptyLocationError('Cannot write to a file with no name.')
+    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
+        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
+    if os.path.exists(file_name) and not os.path.isfile(file_name):
+        if force:
+            if os.path.isdir(file_name):
+                shutil.rmtree(file_name)
+            else:
+                os.unlink(file_name)
+        else:
+            raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
+    
     if not isinstance(contents, str) and isinstance(contents, Iterable):
         output = '\n'.join(contents)
     else:
         output = contents
-    
+        
+    make_dir(os.path.dirname(file_name))
     with codecs.open(file_name, 'w', 'utf-8') as file:
         file.write(output)
 
-def write_line(file_name, line=''):
-    """Append :code:`line` to :code:`file_name`.
+def write_line(file_name, line='', force=False):
+    """Append :code:`line` to the file :code:`file_name`.
+    
+    If the parent directory of this file doesn't exist, it will be automatically created.
     
     A line feed (:code:`\\n`) character is written after :code:`line`.
     
     :param str file_name: The location/name of a file in the local file system.
     :param str line: A line to write to the file :code:`file_name`.
+    :param bool force: If True, if there is a non-writable file (like a directory) in the same location as the file being written to, the function will overwrite this file.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
     """
+    if not file_name:
+        raise EmptyLocationError('Cannot write to a file with no name.')
+    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
+        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
+    if os.path.exists(file_name) and not os.path.isfile(file_name):
+        if force:
+            if os.path.isdir(file_name):
+                shutil.rmtree(file_name)
+            else:
+                os.unlink(file_name)
+        else:
+            raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
+    
+    make_dir(os.path.dirname(file_name))
     with codecs.open(file_name, 'a', 'utf-8') as file:
         file.write(line + '\n')
 
-def write_table(file_name, table, delimiter=','):
+def write_table(file_name, table, delimiter=',', force=False):
     """Writes the two-dimensional list :code:`table` to the file :code:`file_name`.
+    
+    If the parent directory of this file doesn't exist, it will be automatically created.
     
     Rows are joined by a line feed (:code:`\\n`) character, and columns are joined by :code:`delimiter`.
     
     :param str file_name: The location/name of a file in the local file system.
     :param [[str,....],....] table: A two-dimensional list of strings to format and write to the file :code:`file_name`.
     :param str delimiter: A string to join columns in the table by.
+    :param bool force: If True, if there is a non-writable file (like a directory) in the same location as the file being written to, the function will overwrite this file.
+    
+    :raises EmptyLocationError: If :code:`file_name` is an empty string.
+    :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
+    :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
     """
+    if not file_name:
+        raise EmptyLocationError('Cannot write to a file with no name.')
+    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
+        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
+    if os.path.exists(file_name) and not os.path.isfile(file_name):
+        if force:
+            if os.path.isdir(file_name):
+                shutil.rmtree(file_name)
+            else:
+                os.unlink(file_name)
+        else:
+            raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
+    
+    make_dir(os.path.dirname(file_name))
     with codecs.open(file_name, 'w', 'utf-8') as file:
         file.write('\n'.join([delimiter.join(line) for line in table]))
 
@@ -506,7 +685,7 @@ def clear_save():
     except FileNotFoundError:
         return False
 
-def curate(items, curation_class, use_title=False, save=False, ignore_errs=False):
+def curate(items, curation_class, use_title=False, save=False, ignore_errs=False, overwrite=False):
     """Curate games from a list of urls given by :code:`items` with a sub-class of :class:`Curation` specified by :code:`curation_class`.
     
     :param items [str|(str,dict),....]: normally a list of string urls of webpages to curate from, but if you put a tuple with 2 items in the place of any string, the first item in the tuple will be treated as the url, and the second item will be treated as a dictionary of arguments passed to an instance of :code:`curation_class` along with the url. You can mix tuples and strings.
@@ -514,8 +693,11 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
     :param bool use_title: If True, each curation folder will be generated with the title of the curation instead of its id.
     :param bool save: If True, progress will be constantly saved to "c-info.tmp" so that if the function errors and is ever called with the same :code:`items` variable in the same working directory again, it will resume where it left off. Note that calling this function again with a different list of :code:`items` will restart the process and the save file from any other processes.
     :param bool ignore_errs: If True, any error that a curation throws will be ignored and the curation will be skipped. Any failed items will be returned as a list of 3-length tuples at the end of the function with the item, the error, and a dictionary of additional arguments that were passed in.
+    :param bool overwrite: If True, this method will mix and overwrite files in existing curation folders instead of making the folder "Curation (2)", "Curation (3)", etc.
     
     :returns: None or a list of tuples including failed urls, errors, and data passed in. The format for this is `[(str,Exception,dict),...]`
+    
+    :raises ValueError: If :code:`items` is empty.
     """
     if not items:
         raise ValueError('Items list is empty.')
@@ -550,13 +732,13 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
         
         if ignore_errs:
             try:
-                curation_class(url=item, **data).save(use_title)
+                curation_class(url=item, **data).save(use_title, overwrite)
             except KeyboardInterrupt:
                 raise KeyboardInterrupt()
             except Exception as e:
                 errs.append((item, e, data))
         else:
-            curation_class(url=item, **data).save(use_title)
+            curation_class(url=item, **data).save(use_title, overwrite)
         
         i += 1
     
@@ -566,22 +748,32 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
     if ignore_errs:
         return errs
 
-def curate_regex(items, links, use_title=False, save=False, ignore_errs=False):
+def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, overwrite=False):
     """Curate games from a list of urls given by :code:`items` with a list of :code:`links`.
     
     :see: :func:`curate()`
     
     :param [str|(str,dict),....] items: A list of urls of webpages with games to curate.
-    :param [(str|re,class),....] links: A list of tuples containing a regex and a sub-class of :class:`Curation`. The function will search the url of each item for each of the regexes using :code:`re.search()`, and the first match will decide which sub-class gets used. If there are no matches, the curation would be skipped. A good example of the :code:`links` variable is something like :code:`[(re.compile('newgrounds\\.com'), NewgroundsCuration), ('kongregate\\.com', KongregateCuration)]`. Regexes can be strings or a :code:`re` object, though using a :code:`re` object and compiling regexes with :code:`re.compile()` is generally faster.
+    :param [(str|re,class),....] links: A list of tuples containing a regex and a sub-class of :class:`Curation`. The function will search the url of each item for each of the regexes using :code:`re.search()`, and the first match will decide which sub-class gets used. If there are no matches, the curation would be skipped. A good example of the :code:`links` variable is something like :code:`[('newgrounds\\.com', NewgroundsCuration), ('kongregate\\.com', KongregateCuration)]`. Regexes can be strings or a :code:`re` object.
     :param bool use_title: Specifies whether or not to use the title or id of a curation for its folder.
     :param bool save: Specifies whether or not to save progress and continue where left off if the function is called with the same arguments.
     :param bool ignore_errs: Specifies whether or not to ignore errors and return them at the end of the function.
+    :param bool overwrite: Whether or not to mix new curations with older folders with the same name.
+    
+    :returns: None or a list of tuples including failed urls, errors, and data passed in. The format for this is `[(str,Exception,dict),...]`
+    
+    :raises ValueError: If :code:`items` or :code:`links` is empty.
     """
     
     if not items:
         raise ValueError('Items list is empty.')
     if not links:
         raise ValueError('Regex-curation links list is empty.')
+    
+    for i in range(len(links)):
+        link = links[i]
+        if isinstance(link[0], str):
+            links[i] = (re.compile(link[0]), link[1])
     
     if save:
         sid = hash256(items).digest()
@@ -615,13 +807,13 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False):
             if re.search(link[0], item) is not None:
                 if ignore_errs:
                     try:
-                        link[1](url=item, **data).save(use_title)
+                        link[1](url=item, **data).save(use_title, overwrite)
                     except KeyboardInterrupt:
                         raise KeyboardInterrupt()
                     except Exception as e:
                         errs.append((item, e, data))
                 else:
-                    link[1](url=item, **data).save(use_title)
+                    link[1](url=item, **data).save(use_title, overwrite)
                 break
         i += 1
     
@@ -630,6 +822,30 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False):
     
     if ignore_errs:
         return errs
+
+def load(curation):
+    """Loads the curation in the folder :code:`curation` into :class:`Curation` object using ruamel.yaml.
+    
+    :param str curation: A string pointing to the location of a folder where a curation is stored.
+    
+    :returns: A :class:`Curation` object created with the metadata of the curation in the folder :code:`curation`.
+    
+    :note: The curation at :code:`curation` curation must be using the yaml curation format.
+    
+    :raises InvalidCharacterError: If :code:`curation` has invalid characters.
+    :raises FileNotFoundError: If the folder given is not a valid curation.
+    """
+    data = yaml.round_trip_load(read(os.path.join(curation, 'meta.yaml')))
+    c = Curation()
+    c.meta = data
+    
+    folder = curation.replace('\\', '/')
+    if '/' in folder:
+        folder = folder[folder.rfind('/'):]
+    if UUID.fullmatch(folder):
+        c.id = folder
+    
+    return c
 
 class Curation:
     """This is the base class for every kind of curation. If you want a good tutorial on how to use this class, see :doc:`The Basics </basics>`. Extend this class to redefine it's methods."""
@@ -673,6 +889,7 @@ class Curation:
         'extreme': 'Extreme',
         'nsfw': 'Extreme',
         'tags': 'Tags',
+        'genre': 'Tags',
         'source': 'Source',
         'src': 'Source',
         'url': 'Source',
@@ -712,7 +929,7 @@ class Curation:
     Version              version, ver
     Languages            languages, lang
     Extreme              extreme, nsfw
-    Tags                 tags
+    Tags                 tags, genre
     Source               source, src, url
     Platform             platform, tech
     Status               status, s
@@ -728,30 +945,30 @@ class Curation:
     
     def __init__(self, **kwargs):
         """Accepts arguments in the same format as :func:`Curation.set_meta()`."""
-        self.meta = {
-            'Title': None,
-            'Alternate Titles': None,
-            'Library': 'arcade',
-            'Series': None,
-            'Developer': None,
-            'Publisher': None,
-            'Play Mode': 'Single Player',
-            'Release Date': None,
-            'Version': None,
-            'Languages': 'en',
-            'Extreme': 'No',
-            'Tags': None,
-            'Source': None,
-            'Platform': 'Flash',
-            'Status': 'Playable',
-            'Application Path': FLASH,
-            'Launch Command': None,
-            'Game Notes': None,
-            'Original Description': None,
-            'Curation Notes': None,
-            'Additional Applications': {}
-        }
-        """A dictionary containing all metadata for the game. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead.
+        self.meta = OrderedDict([
+            ('Title', None),
+            ('Alternate Titles', None),
+            ('Library', 'arcade'),
+            ('Series', None),
+            ('Developer', None),
+            ('Publisher', None),
+            ('Play Mode', 'Single Player'),
+            ('Release Date', None),
+            ('Version', None),
+            ('Languages', 'en'),
+            ('Extreme', 'No'),
+            ('Tags', None),
+            ('Source', None),
+            ('Platform', 'Flash'),
+            ('Status', 'Playable'),
+            ('Application Path', FLASH),
+            ('Launch Command', None),
+            ('Game Notes', None),
+            ('Original Description', None),
+            ('Curation Notes', None),
+            ('Additional Applications', OrderedDict())
+        ])
+        """An ordered dictionary containing all metadata for the game. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead.
         """
         self.args = {}
         """A dictionary containing all arguments passed in through :func:`Curation.set_meta()` that do not map to any metadata. You can use this to pass in extra information that you want to use in :func:`Curation.parse()` or other methods for custom classes."""
@@ -813,13 +1030,15 @@ class Curation:
         :seealso: The `Additional Applications <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Appendix_II:_Additional_Applications>`_ section of the Curation Format page.
         
         :note: Trying to add an additional app with a heading that already exists will result in replacing it.
+        
+        :raises ValueError: If :code:`heading` is in :attr:`Curation.RESERVED_APPS`.
         """
         if heading.lower() in Curation.RESERVED_APPS:
             raise ValueError('You cannot create an additional app with the name"' + heading + '"')
-        self.meta['Additional Applications'][heading] = {
-            'Application Path': path,
-            'Launch Command': launch
-        }
+        self.meta['Additional Applications'][heading] = OrderedDict([
+            ('Application Path', path),
+            ('Launch Command', launch)
+        ])
     
     def add_ext(self, folder):
         """Add extras from folder.
@@ -847,7 +1066,7 @@ class Curation:
         
         :param str heading: The name of the additional application to delete. Use "Extras" or "Message" to delete an extras or message.
         
-        :raises: KeyError if the app doesn't exist.
+        :raises KeyError: If the app doesn't exist.
         """
         del self.meta['Additional Applications'][heading]
     
@@ -865,7 +1084,7 @@ class Curation:
         
         :returns: :func:`get_soup()` with the :code:`source` part of the metadata as it's parameter.
         """
-        return get_soup(self.get_meta('url'))
+        return get_soup(self.meta['Source'])
     
     def parse(self, soup):
         """Parse for metadata with a soup object provided by :func:`Curation.soupify()`. By default this method does nothing and must be overwritten to give it functionality.
@@ -895,10 +1114,14 @@ class Curation:
         """
         download_image(url, name=file_name)
     
-    def save(self, use_title=False):
+    def save(self, use_title=False, overwrite=False, save_items=EVERYTHING):
         """Save the curation to a folder with the name of :attr:`Curation.id`. Consecutive calls to this method will not overwrite the previous folder, but will instead save it as "Curation (2)", "Curation (3)", etc.
         
         :param str use_title: If True, the folder will be generated with the title of the curation instead of its id.
+        :param bool overwrite: If True, this method will mix and overwrite files in existing curation folders instead of making the folder "Curation (2)", "Curation (3)", etc.
+        :param int save_items: Flags determining what items to save as part of this curation. By default this is :data:`EVERYTHING`. If you wanted to save only the meta and logo, for example, use :code:`save_items=META|LOGO`.
+        
+        :see: :data:`EVERYTHING` and the surrounding constants.
         
         The process of this method is as follows:
         
@@ -912,38 +1135,40 @@ class Curation:
         
         You may overwrite any of these methods to allow for custom usability.
         """
-        
         cwd = os.getcwd()
         try:
             self.parse(self.soupify())
             
             if use_title:
-                folder = INVALID_CHARS.sub('', self.meta['Title'].strip())
-                if folder == '':
+                title = self.meta['Title']
+                if not title:
                     folder = 'No Title'
+                else:
+                    folder = INVALID_CHARS.sub('', title.strip())
             else:
                 folder = self.id
-            number = 1
-            name = folder
-            while os.path.exists(folder):
-                number += 1
-                folder = name + ' (' + str(number) + ')' 
+            if not overwrite:
+                number = 1
+                name = folder
+                while os.path.exists(folder):
+                    number += 1
+                    folder = name + ' (' + str(number) + ')' 
             
-            os.mkdir(folder)
-            os.chdir(folder)
+            make_dir(folder, True)
             
-            with codecs.open('meta.yaml', 'w', 'utf-8') as meta_file:
-                meta_file.write(self.get_yaml())
+            if save_items & META:
+                write('meta.yaml', self.get_yaml())
             
-            if self.logo is not None:
-                self.save_image(self.logo, 'logo.png')
-            if self.ss is not None:
-                self.save_image(self.ss, 'ss.png')
+            if save_items & LOGO:
+                if self.logo is not None:
+                    self.save_image(self.logo, 'logo.png')
+            if save_items & SS:
+                if self.ss is not None:
+                    self.save_image(self.ss, 'ss.png')
             
-            os.mkdir('content')
-            os.chdir('content')
-            
-            self.get_files()
+            if save_items & CONTENT:
+                make_dir('content', True)
+                self.get_files()
         finally:
             os.chdir(cwd)
 

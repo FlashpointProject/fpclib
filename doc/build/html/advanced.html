@@ -247,7 +247,7 @@
 <span class="n">fpclib</span><span class="o">.</span><span class="n">curate</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">NewgroundsCuration</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Though this example isn’t entirely useful, it does reveal a good point: if you don’t want to completely overwrite a function and remove all of it’s functionality, you’ll have to use the <code class="code docutils literal notranslate"><span class="pre">super()</span></code> function to call the original function you are overwriting. You also need to provide it with the right arguments (ignoring the <code class="code docutils literal notranslate"><span class="pre">self</span></code> argument). Whether you put this at the beginning or end of the new function will determine if it gets run before or after your new code.</p>
+<p>Though this example isn’t entirely useful, it does reveal a good point: if you don’t want to completely overwrite a method and remove all of it’s functionality, you’ll have to use the <code class="code docutils literal notranslate"><span class="pre">super()</span></code> function to call the original method you are overwriting. You also need to provide it with the right arguments (ignoring the <code class="code docutils literal notranslate"><span class="pre">self</span></code> argument). Whether you put this at the beginning or end of the new function will determine if it gets run before or after your new code.</p>
 </div>
 </div>
 <div class="section" id="curating-from-multiple-websites">

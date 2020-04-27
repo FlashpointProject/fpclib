@@ -57,6 +57,8 @@ File IO
    read
    read_lines
    read_table
+   make_dir
+   delete
    write
    write_line
    write_table
@@ -72,7 +74,7 @@ Curating
    clear_save
    curate
    curate_regex
-  
+   load
 
 A Single Curation
 =================
@@ -101,6 +103,23 @@ Here's what each step in this code does:
 #. Finally, Save the curation to a folder with :func:`Curation.save()`. This accepts an argument named :code:`use_title` which if you set to True, will generate the curation folder with the curation's title instead of its id (see :attr:`Curation.id`).
 
 You can find a full listing of every function in the :class:`Curation` class in the :doc:`Classes </classes>` page.
+
+Editing Curations
+=================
+
+It's also possible to load and edit existing curations by using the :func:`fpclib.load()` function. Here's an example of that function in action:
+
+    import fpclib
+    
+    c = fpclib.Curation(url='https://www.newgrounds.com/portal/view/218014', title='Interactive Buddy', cmd='http://uploads.ungrounded.net/218000/218014_DAbuddy_latest.swf')
+    c.save(True)
+    
+    d = fpclib.load('Interactive Buddy')
+    d.logo = 'https://picon.ngfiles.com/218000/flash_218014_medium.gif'
+    d.add_app('Kongregate v1.02', 'http://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380')
+    d.save(True, overwrite=True)
+
+Note that if you want to mix new curations together with older curations with the same folder name, you have to set :code:`overwrite` to True.
 
 Further Reading
 ===============

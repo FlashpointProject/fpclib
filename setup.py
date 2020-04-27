@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="fpclib",
-    version="1.0.0",
+    version="1.1.0",
     author="mathgeniuszach",
     author_email="huntingmanzach@gmail.com",
     description="A powerful library for curating games for Flashpoint.",
@@ -14,7 +14,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'requests',
-        'bs4',
+        'beautifulsoup4',
         'pillow',
         'ruamel.yaml'
     ],

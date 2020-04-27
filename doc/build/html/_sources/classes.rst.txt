@@ -5,6 +5,24 @@ Classes
 .. contents:: Quick Links
    :local:
 
+Exceptions
+==========
+
+:hide:`InvalidCharacterError`
+-----------------------------
+
+.. autoclass:: InvalidCharacterError
+
+:hide:`InvalidFileError`
+-------------------------
+
+.. autoclass:: InvalidFileError
+
+:hide:`EmptyLocationError`
+--------------------------
+
+.. autoclass:: EmptyLocationError
+
 Curation
 ========
 
@@ -35,7 +53,7 @@ Fields
 .. attribute:: Curation.meta
    :type: dict
    
-   A dictionary containing all metadata for the game. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead.
+   A ordered dictionary containing all metadata for the game. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead.
 
 :hide:`args`
 ^^^^^^^^^^^^

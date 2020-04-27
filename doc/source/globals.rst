@@ -54,8 +54,15 @@ Regexes
    :annotation:
 
 :hide:`EXTENSION`
+^^^^^^^^^^^^^^^^^
 
 .. autodata:: EXTENSION
+   :annotation:
+
+:hide:`UUID`
+^^^^^^^^^^^^
+
+.. autodata:: UUID
    :annotation:
 
 Application Paths
@@ -102,6 +109,45 @@ Application Paths
 ^^^^^^^^^^^^^^^^^
 
 .. autodata:: SHOCKWAVE
+
+Flags
+-----
+
+:hide:`EVERYTHING`
+^^^^^^^^^^^^^^^^^^
+
+.. autodata:: EVERYTHING
+   :annotation: = int('1111', 2)
+
+:hide:`META`
+^^^^^^^^^^^^
+
+.. autodata:: META
+   :annotation: = int('1000', 2)
+
+:hide:`IMAGES`
+^^^^^^^^^^^^^^
+
+.. autodata:: IMAGES
+   :annotation: = int('0110', 2)
+
+:hide:`LOGO`
+^^^^^^^^^^^^
+
+.. autodata:: LOGO
+   :annotation: = int('0100', 2)
+
+:hide:`SS`
+^^^^^^^^^^
+
+.. autodata:: SS
+   :annotation: = int('0010', 2)
+
+:hide:`CONTENT`
+^^^^^^^^^^^^^^^
+
+.. autodata:: CONTENT
+   :annotation: = int('0001', 2)
 
 Functions
 =========
@@ -157,6 +203,16 @@ File IO
 
 .. autofunction:: read_table
 
+:hide:`make_dir()`
+^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: make_dir
+
+:hide:`delete()`
+^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: delete
+
 :hide:`write()`
 ^^^^^^^^^^^^^^^
 
@@ -204,3 +260,8 @@ Curating
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: curate_regex
+
+:hide:`load()`
+^^^^^^^^^^^^^^
+
+.. autofunction:: load

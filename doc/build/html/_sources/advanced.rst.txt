@@ -77,7 +77,7 @@ You can also overwrite other :class:`Curation` class methods to change the funct
     urls = ['https://www.newgrounds.com/portal/view/218014', 'https://www.newgrounds.com/portal/view/59593']
     fpclib.curate(urls, NewgroundsCuration, True)
 
-Though this example isn't entirely useful, it does reveal a good point: if you don't want to completely overwrite a function and remove all of it's functionality, you'll have to use the :code:`super()` function to call the original function you are overwriting. You also need to provide it with the right arguments (ignoring the :code:`self` argument). Whether you put this at the beginning or end of the new function will determine if it gets run before or after your new code.
+Though this example isn't entirely useful, it does reveal a good point: if you don't want to completely overwrite a method and remove all of it's functionality, you'll have to use the :code:`super()` function to call the original method you are overwriting. You also need to provide it with the right arguments (ignoring the :code:`self` argument). Whether you put this at the beginning or end of the new function will determine if it gets run before or after your new code.
 
 Curating from Multiple Websites
 -------------------------------
