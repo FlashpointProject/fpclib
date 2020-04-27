@@ -21,7 +21,7 @@ project = 'fpclib'
 author = 'mathgeniuszach'
 
 # The full version, including alpha/beta/rc tags
-release = 'b1.1'
+release = '1.1.0'
 
 
 # -- General configuration ---------------------------------------------------
