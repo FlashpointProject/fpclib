@@ -10,7 +10,7 @@ setuptools.setup(
     author=metadata.AUTHOR,
     author_email=metadata.EMAIL,
     description=metadata.DESC,
-    long_description=metadata.long_description,
+    long_description=long_description,
     url=metadata.URL,
     packages=[metadata.NAME],
     install_requires=metadata.REQ
