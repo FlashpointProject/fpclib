@@ -1,5 +1,6 @@
 @ECHO OFF
 
+
 pushd %~dp0
 
 REM Command file for Sphinx documentation
@@ -22,14 +23,14 @@ if errorlevel 9009 (
 	echo.
 	echo.If you don't have Sphinx installed, grab it from
 	echo.http://sphinx-doc.org/
-	exit /b 1
+	goto term
 )
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-goto end
+goto term
 
 :help
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
-:end
+:term
 popd

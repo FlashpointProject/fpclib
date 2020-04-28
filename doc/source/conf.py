@@ -16,8 +16,6 @@ import sys
 sys.path.insert(0, os.path.abspath('../../'))
 import metadata
 
-sys.path.insert(0, os.path.abspath('../../' + metadata.NAME + '/'))
-
 
 # -- Project information -----------------------------------------------------
 

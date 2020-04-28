@@ -7,3 +7,10 @@ __pycache__
 
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
+
+# Build folder and version
+/build
+build.txt
+
+# Upload script
+upload.bat

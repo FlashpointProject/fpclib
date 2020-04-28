@@ -40,7 +40,7 @@ You can install the library with
 
     pip install fpclib
 
-or you can put the "fpclib.py" script (in the "fpclib" directory) in the same directory as your script.
+or you can put the "fpclib.py" script (check the releases page) in the same directory as your script.
 
 If you choose the second option, you'll need to install these libraries through pip::
 
