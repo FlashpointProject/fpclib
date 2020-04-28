@@ -59,9 +59,19 @@ More Reading
 Usage
 =====
 
-In order to use this library, you need to have python installed. You can install python3 from the `python downloads page <https://www.python.org/downloads/>`_, and afterwards you can install the library with 
+You can install the library with
+::
 
     pip install fpclib
+
+or you can put the "fpclib.py" script (in the "fpclib" directory) in the same directory as your script.
+
+If you choose the second option, you'll need to install these libraries through pip::
+
+    pip install requests
+    pip install beautifulsoup4
+    pip install pillow
+    pip install ruamel.yaml
 
 Once you have all of that set up, you can put :code:`import fpclib` at the top of your script to use it's methods.
 

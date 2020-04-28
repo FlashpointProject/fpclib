@@ -2,8 +2,9 @@
 About
 #####
 
-| **Author**: mathgeniuszach
-| **Version**: 1.1.0
+| **Project**: |name|
+| **Author**: |author|
+| **Version**: |version|
 | **Special Thanks**:
 
 * **DarkMoe** for inspiring me with his hard work and many Curations.

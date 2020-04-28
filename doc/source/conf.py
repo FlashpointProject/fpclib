@@ -12,16 +12,20 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../../'))
+import metadata
+
+sys.path.insert(0, os.path.abspath('../../' + metadata.NAME + '/'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'fpclib'
-author = 'mathgeniuszach'
+project = metadata.NAME
+author = metadata.AUTHOR
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.0'
+release = metadata.VERSION
 
 
 # -- General configuration ---------------------------------------------------
@@ -69,3 +73,13 @@ rst_prolog = """
 .. role:: hide
 
 """
+
+rst_epilog = """
+
+.. |name| replace:: %s
+
+.. |author| replace:: %s
+
+.. |version| replace:: %s
+
+""" % (metadata.NAME, metadata.AUTHOR, metadata.VERSION)
