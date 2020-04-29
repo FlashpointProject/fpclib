@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Globals &mdash; fpclib 1.1.3.2 documentation</title>
+  <title>Globals &mdash; fpclib 1.2.0.1 documentation</title>
   
 
   
@@ -707,7 +707,7 @@
 <h4><a class="toc-backref" href="#id30"><span class="hide">download()</span></a><a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h4>
 <dl class="py function">
 <dt id="fpclib.download">
-<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">loc</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.download" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">loc</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the webpage or file at <code class="code docutils literal notranslate"><span class="pre">url</span></code> to the location <code class="code docutils literal notranslate"><span class="pre">loc</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -715,6 +715,7 @@
 <li><p><strong>url</strong> (<em>str</em>) – A url pointing to a file to be downloaded.</p></li>
 <li><p><strong>loc</strong> (<em>str</em>) – A folder to download to; leave blank for the current working directory. If the folder doesn’t exist, it will be created automatically.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – If specified, the file will be saved with this name instead of an automatically generated one.</p></li>
+<li><p><strong>kwargs</strong> (<em>**</em>) – A collection of arguments to request with. Same format as <code class="code docutils literal notranslate"><span class="pre">requests.get()</span></code>, but without the url parameter.</p></li>
 </ul>
 </dd>
 </dl>
@@ -731,7 +732,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>urls</strong> (<em>[</em><em>str</em><em>,</em><em>...</em><em>]</em>) – A list of urls pointing to files to be downloaded.</p></li>
+<li><p><strong>urls</strong> (<em>[</em><em>str|</em><em>(</em><em>str</em><em>,</em><em>dict</em><em>)</em><em>,</em><em>...</em><em>]</em>) – A list of urls pointing to files to be downloaded. If a url is a tuple instead of a string, the first item in the tuple will be read as the url and the second will be read a dictionary of arguments to request with. The dictionary of arguments is in a similar format to the arguments <code class="code docutils literal notranslate"><span class="pre">requests.get()</span></code> uses, but without the url parameter.</p></li>
 <li><p><strong>loc</strong> (<em>str</em>) – A folder to download to; leave blank for the current working directory. If the folder doesn’t exist, it will be created automatically.</p></li>
 <li><p><strong>preserve</strong> (<em>bool</em>) – If True, any files from “web.archive.org” will stay in the “web.archive.org” folder. By default, files are moved to their original domains with any port numbers removed.</p></li>
 <li><p><strong>keep_vars</strong> (<em>bool</em>) – If True, files will be saved with all urlvars intact in their file name. This prevents files such as “<a class="reference external" href="http://www.example.com/game.php?id=123">http://www.example.com/game.php?id=123</a>” and “<a class="reference external" href="http://www.example.com/game.php?id=321">http://www.example.com/game.php?id=321</a>” from overwriting each other. Question marks are replaced with “_”.</p></li>
@@ -749,7 +750,7 @@
 <h4><a class="toc-backref" href="#id32"><span class="hide">download_image()</span></a><a class="headerlink" href="#download-image" title="Permalink to this headline">¶</a></h4>
 <dl class="py function">
 <dt id="fpclib.download_image">
-<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">download_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">loc</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.download_image" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">download_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">loc</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.download_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the image from <code class="code docutils literal notranslate"><span class="pre">url</span></code> to the location <code class="code docutils literal notranslate"><span class="pre">loc</span></code> as a PNG file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -757,6 +758,7 @@
 <li><p><strong>url</strong> (<em>str</em>) – A url pointing to the image to be downloaded.</p></li>
 <li><p><strong>loc</strong> (<em>str</em>) – A folder to download to; leave blank for the current working directory. If the folder doesn’t exist, it will be created automatically.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – If specified, the file will be saved with this name instead of an automatically generated one.</p></li>
+<li><p><strong>kwargs</strong> (<em>**</em>) – A collection of arguments to request with. Same format as <code class="code docutils literal notranslate"><span class="pre">requests.get()</span></code>, but without the url parameter.</p></li>
 </ul>
 </dd>
 </dl>
@@ -790,13 +792,14 @@
 <h4><a class="toc-backref" href="#id34"><span class="hide">get_soup()</span></a><a class="headerlink" href="#get-soup" title="Permalink to this headline">¶</a></h4>
 <dl class="py function">
 <dt id="fpclib.get_soup">
-<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">get_soup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">parser</span><span class="o">=</span><span class="default_value">'html.parser'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.get_soup" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">get_soup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">parser</span><span class="o">=</span><span class="default_value">'html.parser'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.get_soup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the webpage at <code class="code docutils literal notranslate"><span class="pre">url</span></code> and creates a BeautifulSoup object with it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>str</em>) – A string url of a webpage.</p></li>
 <li><p><strong>parser</strong> (<em>str</em>) – The BeautifulSoup parser to use.</p></li>
+<li><p><strong>kwargs</strong> (<em>**</em>) – A collection of arguments to request with. Same format as <code class="code docutils literal notranslate"><span class="pre">requests.get()</span></code>, but without the url parameter.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -810,11 +813,14 @@
 <h4><a class="toc-backref" href="#id35"><span class="hide">read_url()</span></a><a class="headerlink" href="#read-url" title="Permalink to this headline">¶</a></h4>
 <dl class="py function">
 <dt id="fpclib.read_url">
-<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">read_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.read_url" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">read_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#fpclib.read_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the webpage or file at <code class="code docutils literal notranslate"><span class="pre">url</span></code> and returns its contents as a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – A string url of a webpage or file.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – A string url of a webpage or file.</p></li>
+<li><p><strong>kwargs</strong> (<em>**</em>) – A collection of arguments to request with. Same format as <code class="code docutils literal notranslate"><span class="pre">requests.get()</span></code>, but without the url parameter.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The contents of the webpage at <code class="code docutils literal notranslate"><span class="pre">url</span></code> as a string or None if the url is blank.</p>

@@ -14,7 +14,7 @@ if __name__ == '__main__':
         file.write(str(build))
 
 NAME = 'fpclib'
-VERSION = '1.1.3.' + get_build()
+VERSION = '1.2.0.' + get_build()
 AUTHOR = 'mathgeniuszach'
 EMAIL = 'huntingmanzach@gmail.com'
 DESC = 'A powerful library for curating games for Flashpoint.'

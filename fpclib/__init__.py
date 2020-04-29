@@ -230,12 +230,13 @@ def test():
     except:
         raise AssertionError('The working curation has failed. Be wary when using this program.')
 
-def download(url, loc='', name=None):
+def download(url, loc='', name=None, **kwargs):
     """Downloads the webpage or file at :code:`url` to the location :code:`loc`.
     
     :param str url: A url pointing to a file to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param str name: If specified, the file will be saved with this name instead of an automatically generated one.
+    :param ** kwargs: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
     """
     rurl = normalize(url, True, True, True)
     raw = rurl
@@ -253,7 +254,7 @@ def download(url, loc='', name=None):
         else:
             file_name = raw[raw.rfind('/')+1:]
     
-    with requests.get(rurl) as response:
+    with requests.get(rurl, **kwargs) as response:
         if loc:
             make_dir(loc)
             file_name = os.path.join(loc, file_name)
@@ -265,7 +266,7 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
     
     For those that are familiar with cURLsDownloader, this function acts in a similar way. Invalid characters for a file/folder name will be replaced with "_", but "://" will be replaced with ".".
     
-    :param [str,....] urls: A list of urls pointing to files to be downloaded.
+    :param [str|(str,dict),....] urls: A list of urls pointing to files to be downloaded. If a url is a tuple instead of a string, the first item in the tuple will be read as the url and the second will be read a dictionary of arguments to request with. The dictionary of arguments is in a similar format to the arguments :code:`requests.get()` uses, but without the url parameter.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param bool preserve: If True, any files from "web.archive.org" will stay in the "web.archive.org" folder. By default, files are moved to their original domains with any port numbers removed.
     :param bool keep_vars: If True, files will be saved with all urlvars intact in their file name. This prevents files such as "http://www.example.com/game.php?id=123" and "http://www.example.com/game.php?id=321" from overwriting each other. Question marks are replaced with "_".
@@ -278,8 +279,14 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
         make_dir(loc, True)
     errs = []
     try:
-        for url in urls:
+        for item in urls:
             try:
+                if isinstance(item, tuple):
+                    (url, data) = item
+                else:
+                    url = item
+                    data = {}
+                
                 rurl = normalize(url, preserve, True, True)
                 raw = rurl
                 url_vars = ''
@@ -298,7 +305,7 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
                 
                 raw = INVALID_CHARS_NO_SLASH.sub('_', raw.replace('://', '.'))
                 
-                with requests.get(rurl) as response:
+                with requests.get(rurl, **data) as response:
                     make_dir(os.path.dirname(raw))
                     with open(raw, 'wb') as file:
                         file.write(response.content)
@@ -314,12 +321,13 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
     if ignore_errs:
         return errs
 
-def download_image(url, loc='', name=None):
+def download_image(url, loc='', name=None, **kwargs):
     """Downloads the image from :code:`url` to the location :code:`loc` as a PNG file.
     
     :param str url: A url pointing to the image to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param str name: If specified, the file will be saved with this name instead of an automatically generated one.
+    :param ** kwargs: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
     """
     rurl = normalize(url, True, True, True)
     raw = rurl
@@ -341,7 +349,7 @@ def download_image(url, loc='', name=None):
             else:
                 file_name += '.png'
     
-    with requests.get(rurl) as response:
+    with requests.get(rurl, **kwargs) as response:
         img = Image.open(BytesIO(response.content))
         if loc:
             make_dir(loc)
@@ -377,30 +385,32 @@ def normalize(url, preserve=True, keep_vars=False, keep_prot=False):
     else:
         return 'http://' + rurl
 
-def get_soup(url, parser='html.parser'):
+def get_soup(url, parser='html.parser', **kwargs):
     """Reads the webpage at :code:`url` and creates a BeautifulSoup object with it.
     
     :param str url: A string url of a webpage.
     :param str parser: The BeautifulSoup parser to use.
+    :param ** kwargs: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
     
     :returns: A BeautifulSoup object created from :code:`url` or None if the url is blank.
     """
     if not url:
         return None
-    with requests.get(normalize(url, True, True, True)) as response:
+    with requests.get(normalize(url, True, True, True), **kwargs) as response:
         soup = BeautifulSoup(response.text, parser)
     return soup
 
-def read_url(url):
+def read_url(url, **kwargs):
     """Reads the webpage or file at :code:`url` and returns its contents as a string.
     
     :param str url: A string url of a webpage or file.
+    :param ** kwargs: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
     
     :returns: The contents of the webpage at :code:`url` as a string or None if the url is blank.
     """
     if not url:
         return None
-    with requests.get(normalize(url, True, True, True)) as response:
+    with requests.get(normalize(url, True, True, True), **kwargs) as response:
         text = response.text
     return text
 
