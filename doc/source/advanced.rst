@@ -2,7 +2,7 @@
 Advanced Stuff
 ##############
 
-This is an advanced tutorial on using fpclib to curate games for Flashpoint.
+This is an advanced tutorial on using fpclib to curate games/animations for Flashpoint.
 
 It is recommended that you read :doc:`The Basics </basics>` before moving on to this tutorial.
 
@@ -15,7 +15,7 @@ Multiple Curations
 The :func:`curate()` Function
 -----------------------------
 
-fpclib supports using the :func:`curate()` function to curate multiple games from the same website. This function automatically creates :class:`Curation` objects with a list of urls and runs the :func:`Curation.save()` method on them. You can pass additional arguments to each curation through a dictionary.
+fpclib supports using the :func:`curate()` function to curate multiple games/animations from the same website. This function automatically creates :class:`Curation` objects with a list of urls and runs the :func:`Curation.save()` method on them. You can pass additional arguments to each curation through a dictionary.
 ::
 
     import fpclib
@@ -23,12 +23,12 @@ fpclib supports using the :func:`curate()` function to curate multiple games fro
     urls = [('https://www.newgrounds.com/portal/view/218014', {'title': 'Interactive Buddy'}), ('https://www.newgrounds.com/portal/view/59593', {'title': 'Alien Hominid'})]
     fpclib.curate(urls, fpclib.Curation, True)
 
-The :func:`curate()` function offers options to save curations in folders based on their titles instead of their ids, save progress in the case of a error, and ignore errors and return them at the end of the function. Click on the function to figure out more about the things you can do with it.
+The :func:`curate()` function also offers the options to save curations in folders based on their titles instead of their ids, save progress in the case of a error, and ignore errors and return them at the end of the function. Click on the function to figure out more about the things you can do with it.
 
 Parsing Websites for Metadata
 -----------------------------
 
-Manually typing in the metadata for every function is tedious, and to deal with that, you can use the :func:`curate()` function and extend the :class:`Curation` class to parse the webpage at each source url.
+Manually typing in the metadata for every curation into each call to :func:`Curation.set_meta()` is tedious, and to deal with that, you can use the :func:`curate()` function and extend the :class:`Curation` class to parse the webpage at each source url.
 
 Check out the code below, which takes full advantage of this fact::
 
@@ -48,14 +48,14 @@ Check out the code below, which takes full advantage of this fact::
     urls = ['https://www.newgrounds.com/portal/view/218014', 'https://www.newgrounds.com/portal/view/59593']
     fpclib.curate(urls, NewgroundsCuration, True)
 
-This is possible because of the hidden method :func:`Curation.parse()`, which does nothing until you overwrite it. This method is called with a BeautifulSoup object created from the webpage's source url (see :func:`Curation.soupify()`). Through that one soup object it's possible to parse the entire webpage for metadata that changes between games.
+This is possible because of the hidden method :func:`Curation.parse()`, which does nothing until you overwrite it. This method is called with a BeautifulSoup object created from the webpage's source url (see :func:`Curation.soupify()`). Through that one soup object it's possible to parse the entire webpage for metadata that changes between games/animations.
 
 If you aren't familiar with using BeautifulSoup, you should read through the `BeautifulSoup documenation <https://www.crummy.com/software/BeautifulSoup/bs4/doc/>`_.
 
 Overwriting Other Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can also overwrite other :class:`Curation` class methods to change the functionality further. Take for example the :func:`Curation.get_files()` method::
+You can also overwrite other :class:`Curation` class methods to change their functionality further. Take for example the :func:`Curation.get_files()` method::
 
     import fpclib
     import json
@@ -82,7 +82,7 @@ Though this example isn't entirely useful, it does reveal a good point: if you d
 Curating from Multiple Websites
 -------------------------------
 
-If you want to curate from multiple websites, you'll want to use the :func:`curate_regex()` function instead of :func:`curate()`. This function works very similar to the :func:`curate()` function, but instead of passing a single :class:`Curation` sub-class into it, you pass in a list of tuples containing a regex and a single :class:`Curation` sub-class. For more details, click on the function.
+If you want to curate from multiple websites, you'll want to use the :func:`curate_regex()` function instead of :func:`curate()`. This function works very similar to the :func:`curate()` function, but instead of passing a single :class:`Curation` sub-class into it, you pass in a list of tuples containing a regex and a :class:`Curation` sub-class. For more details, click on the function.
 
 Further Reading
 ===============

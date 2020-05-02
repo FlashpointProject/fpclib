@@ -3,7 +3,7 @@ import metadata
 
 setuptools.setup(
     name=metadata.NAME,
-    version=metadata.VERSION,
+    version=metadata.RELEASE,
     author=metadata.AUTHOR,
     author_email=metadata.EMAIL,
     description=metadata.DESC,

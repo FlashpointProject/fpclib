@@ -65,6 +65,12 @@ Regexes
 .. autodata:: UUID
    :annotation:
 
+:hide:`STARTING_PARENTHESES`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autodata:: STARTING_PARENTHESES
+   :annotation:
+
 Application Paths
 -----------------
 
@@ -78,10 +84,10 @@ Application Paths
 
 .. autodata:: JAVA
 
-:hide:`UNITY`
-^^^^^^^^^^^^^
+:hide:`JAVA_IN_BROWSER`
+^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autodata:: UNITY
+.. autodata:: JAVA_IN_BROWSER
 
 :hide:`BASILISK`
 ^^^^^^^^^^^^^^^^
@@ -109,6 +115,39 @@ Application Paths
 ^^^^^^^^^^^^^^^^^
 
 .. autodata:: SHOCKWAVE
+
+:hide:`UNITY`
+^^^^^^^^^^^^^
+
+.. autodata:: UNITY
+
+:hide:`ACTIVE_X`
+^^^^^^^^^^^^^^^^
+
+.. autodata:: ACTIVE_X
+
+:hide:`GROOVE`
+^^^^^^^^^^^^^^
+
+.. autodata:: GROOVE
+
+:hide:`SVR`
+^^^^^^^^^^^
+
+.. autodata:: SVR
+
+:hide:`APPLICATIONS`
+^^^^^^^^^^^^^^^^^^^^
+
+.. autodata:: APPLICATIONS
+
+Other
+-----
+
+:hide:`LANGUAGES`
+^^^^^^^^^^^^^^^^^
+
+.. autodata:: LANGUAGES
 
 Flags
 -----
@@ -149,6 +188,54 @@ Flags
 .. autodata:: CONTENT
    :annotation: = int('0001', 2)
 
+Other
+=====
+
+:hide:`DEBUG_LEVEL`
+-------------------
+
+.. autodata:: DEBUG_LEVEL
+
+:hide:`TABULATION`
+------------------
+
+.. autodata:: TABULATION
+
+:hide:`PLATFORMS`
+-----------------
+
+.. autodata:: PLATFORMS
+   :annotation:
+
+:hide:`TAGS`
+------------
+
+.. autodata:: TAGS
+   :annotation:
+
+Exceptions
+==========
+
+:hide:`InvalidCharacterError`
+-----------------------------
+
+.. autoclass:: InvalidCharacterError
+
+:hide:`InvalidFileError`
+-------------------------
+
+.. autoclass:: InvalidFileError
+
+:hide:`EmptyLocationError`
+--------------------------
+
+.. autoclass:: EmptyLocationError
+
+:hide:`InvalidMetadataError`
+----------------------------
+
+.. autoclass:: InvalidMetadataError
+
 Functions
 =========
 
@@ -175,15 +262,20 @@ Internet
 
 .. autofunction:: normalize
 
+:hide:`read_url()`
+^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: read_url
+
 :hide:`get_soup()`
 ^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: get_soup
 
-:hide:`read_url()`
-^^^^^^^^^^^^^^^^^^
+:hide:`get_fpdata()`
+^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: read_url
+.. autofunction:: get_fpdata
 
 File IO
 -------
@@ -245,6 +337,16 @@ Curating
 ^^^^^^^^^^^^^^
 
 .. autofunction:: test
+
+:hide:`update()`
+^^^^^^^^^^^^^^^^
+
+.. autofunction:: update
+
+:hide:`debug()`
+^^^^^^^^^^^^^^^
+
+.. autofunction:: debug
 
 :hide:`clear_save()`
 ^^^^^^^^^^^^^^^^^^^^

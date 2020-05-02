@@ -5,24 +5,6 @@ Classes
 .. contents:: Quick Links
    :local:
 
-Exceptions
-==========
-
-:hide:`InvalidCharacterError`
------------------------------
-
-.. autoclass:: InvalidCharacterError
-
-:hide:`InvalidFileError`
--------------------------
-
-.. autoclass:: InvalidFileError
-
-:hide:`EmptyLocationError`
---------------------------
-
-.. autoclass:: EmptyLocationError
-
 Curation
 ========
 
@@ -30,8 +12,8 @@ Curation
    
    .. autofunction:: __init__
    
-Constants
----------
+Attributes
+----------
 
 :hide:`RESERVED_APPS`
 ^^^^^^^^^^^^^^^^^^^^^
@@ -44,8 +26,8 @@ Constants
 .. autoattribute:: Curation.ARGS
    :annotation:
 
-Fields
-------
+Member Fields
+-------------
 
 :hide:`meta`
 ^^^^^^^^^^^^
@@ -53,7 +35,7 @@ Fields
 .. attribute:: Curation.meta
    :type: dict
    
-   A ordered dictionary containing all metadata for the game. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead.
+   An ordered dictionary containing all metadata for the curation. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead.
 
 :hide:`args`
 ^^^^^^^^^^^^
@@ -70,7 +52,7 @@ Fields
    :type: str
    :value: None
    
-   A url pointing to an image to be used as the logo for this game. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will.
+   A url pointing to an image to be used as the logo for this curation. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will.
 
 :hide:`ss`
 ^^^^^^^^^^
@@ -79,7 +61,7 @@ Fields
    :type: str
    :value: None
    
-   A url pointing to an image to be used as the screenshot for this game. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will.
+   A url pointing to an image to be used as the screenshot for this curation. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will.
 
 :hide:`id`
 ^^^^^^^^^^
@@ -88,7 +70,7 @@ Fields
    :type: str
    :value: str(uuid.uuid4())
    
-   A UUID identifying this curation. By default this is the name of the folder the curation will be saved to when Curation.save() is called. You can re-generate an id by using :func:`Curation.new_id()`.
+   A string UUID identifying this curation. By default this is the name of the folder the curation will be saved to when Curation.save() is called. You can re-generate an id by using :func:`Curation.new_id()`.
 
 Methods
 -------
@@ -158,7 +140,22 @@ Methods
 
 .. automethod:: Curation.save
 
+:hide:`get_errors()`
+^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: Curation.get_errors
+
+:hide:`check_source()`
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: Curation.check_source
+
 TestCuration
 ============
 
 .. autoclass:: TestCuration
+
+BrokenCuration
+==============
+
+.. autoclass:: BrokenCuration

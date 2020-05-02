@@ -1,5 +1,6 @@
 @echo off
 if exist dist del /q dist build __pycache__
+if exist doc\build del /q "doc\build"
 py metadata.py
 echo.
 echo ---------- Building Documentation ----------

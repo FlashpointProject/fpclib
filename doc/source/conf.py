@@ -21,10 +21,7 @@ import metadata
 
 project = metadata.NAME
 author = metadata.AUTHOR
-
-# The full version, including alpha/beta/rc tags
 release = metadata.VERSION
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -80,4 +77,4 @@ rst_epilog = """
 
 .. |version| replace:: %s
 
-""" % (metadata.NAME, metadata.AUTHOR, metadata.VERSION)
+""" % (metadata.NAME, metadata.AUTHOR, metadata.RELEASE)

@@ -1,15 +1,15 @@
 General Overview
 ================
-"fpclib" stands for "Flashpoint Curation Library" and is a powerful collection of functions and classes you can use and extend to hopefully curate any game in existence through python3. If you're not familiar with curating games for Flashpoint, first follow the `Curation Tutorial <https://bluemaxima.org/flashpoint/datahub/Curation_Tutorial>`_ page on the Flashpoint wiki. If you're not familiar with using python or coding, you should read the `official python tutorial <https://docs.python.org/3/tutorial/index.html>`_.
+"fpclib" stands for "Flashpoint Curation Library" and is a powerful collection of functions and classes you can use and extend to hopefully curate any game/animation in existence through python3. If you're not familiar with curating for Flashpoint and would like to know how to curate, first follow the `Curation Tutorial <https://bluemaxima.org/flashpoint/datahub/Curation_Tutorial>`_ page on the Flashpoint wiki. If you're not familiar with using python or coding, you should read the `official python tutorial <https://docs.python.org/3/tutorial/index.html>`_ before using this library.
 
-Although there are already several useful tools you can use for manually curating games for Flashpoint and downloading assets easily, such as Flashpoint Core, cURLsDownloader, and MAD4FP, none of these tools offer the ability to curate games through code or automate the process; fpclib was created to fix that. Of course, you should still always manually check any curation in Flashpoint Core to make sure it works properly.
+Although there are already several useful tools you can use for manually curating games/animations for Flashpoint and downloading assets easily, such as Flashpoint Core, cURLsDownloader, and MAD4FP, none of these tools offer the ability to curate through code or automate the process; fpclib was created to fix that. Of course, you should still always manually check any curation you make with fpclib in Flashpoint Core to make sure it works properly.
 
-There are numerous benefits of using fpclib to help you curate your games:
+There are numerous benefits of using fpclib to help you curate:
 
-* By default, fpclib downloads main game files and puts them in the right file format based upon your launch commands.
+* By default, fpclib downloads main game/animation files and puts them in the right file format based upon your launch commands.
 * Logos and screenshots can be automatically downloaded from online and converted to PNG files.
-* Curating similar games from a single or multiple sites is simple and easy thanks to the :code:`fpclib.curate()` function.
-* **Nearly every kind of Curation is customizable!** This library and documentation were created with the intent of making it easy to overwrite the Curation class to make it do different things.
+* Curating similar games/animations from one or more websites is simple and easy thanks to the :code:`fpclib.curate()` function.
+* **Nearly every kind of Curation is possible to make with this library!** This library and documentation were created with the intent of making it easy to overwrite the Curation class to make it do different things. Anything you can do in the "Curate" tab in Flashpoint Core you can do with fpclib, except test games.
 
 Here's some example code of using the library to curate "Interactive Buddy" from Newgrounds::
 
@@ -25,7 +25,7 @@ Here's some example code of using the library to curate "Interactive Buddy" from
 
     curation.save()
 
-You can also test the library by running the script directly or with :code:`fpclib.test()`, which will also curate "Interactive Buddy" and download the swf file linked in the launch command into the proper place in a folder in the current working directory.
+You can also test the library by running the script directly or with :code:`fpclib.test()`, which will also curate "Interactive Buddy" in the current working directory, delete the curation, and check an invalid curation.
 
 More Reading
 ============
@@ -42,7 +42,7 @@ You can install the library with
 
 or you can put the "fpclib.py" script (check the releases page) in the same directory as your script.
 
-If you choose the second option, you'll need to install these libraries through pip::
+If you choose the second option, you'll also need to install these libraries through pip::
 
     pip install requests
     pip install beautifulsoup4

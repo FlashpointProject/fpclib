@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<title>Platforms - Flashpoint Database</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"Platforms","wgTitle":"Platforms","wgCurRevisionId":2181,"wgRevisionId":2181,"wgArticleId":113,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"Platforms","wgRelevantArticleId":113,"wgRequestId":"d12227add5d3f8ef8ec631fa","wgIsProbablyEditable":false,"wgRelevantPageIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[]});mw.loader.state({"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"loading","user.tokens":"loading","mediawiki.legacy.shared":"ready","mediawiki.legacy.commonPrint":"ready","mediawiki.sectionAnchor":"ready","mediawiki.skinning.interface":"ready","skins.vector.styles":"ready"});mw.loader.implement("user.options@0bhc5ha",function($,jQuery,require,module){mw.user.options.set([]);});mw.loader.implement("user.tokens@1n3g5wp",function ( $, jQuery, require, module ) {
+mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});/*@nomin*/
+
+});mw.loader.load(["site","mediawiki.page.startup","mediawiki.user","mediawiki.hidpi","mediawiki.page.ready","mediawiki.searchSuggest","skins.vector.js"]);});</script>
+<link rel="stylesheet" href="/flashpoint/datahub/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles&amp;only=styles&amp;skin=vector"/>
+<script async="" src="/flashpoint/datahub/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<meta name="generator" content="MediaWiki 1.30.0"/>
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/flashpoint/datahub/opensearch_desc.php" title="Flashpoint Database (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://bluemaxima.org/flashpoint/datahub/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Flashpoint Database Atom feed" href="/flashpoint/datahub/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/resources/lib/html5shiv/html5shiv.min.js"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-Platforms rootpage-Platforms skin-vector action-view">		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<div id="content" class="mw-body" role="main">
+			<a id="top"></a>
+
+						<div class="mw-indicators mw-body-content">
+</div>
+			<h1 id="firstHeading" class="firstHeading" lang="en">Platforms</h1>
+									<div id="bodyContent" class="mw-body-content">
+									<div id="siteSub" class="noprint">From Flashpoint Database</div>
+								<div id="contentSub"></div>
+												<div id="jump-to-nav" class="mw-jump">
+					Jump to:					<a href="#mw-head">navigation</a>, 					<a href="#p-search">search</a>
+				</div>
+				<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><p>This is a table of all web game technologies ("Platforms") supported by Flashpoint. The table includes the following for each technology: 
+</p>
+<ul><li> Official Name: The official name of the technology. Useful for searching for information about the technology or looking for games.</li>
+<li> Short Name: The name displayed in Flashpoint Launcher. </li>
+<li> Default Application: The path to the default application used to launch a game of this technology. </li>
+<li> Curation Tutorial: A link to a curation tutorial for each platform. Some tutorials are not available yet, so please help create them if you can!</li></ul>
+<table class="wikitable">
+<tr>
+<th style="font-weight:bold;"> Short Name
+</th>
+<th style="font-weight:bold;"> Official Name
+</th>
+<th style="font-weight:bold;"> Default Application
+</th>
+<th style="font-weight:bold;"> Curation Tutorial
+</th></tr>
+<tr>
+<td> Flash
+</td>
+<td> Adobe Flash Player
+</td>
+<td> <code>FPSoftware\Flash\flashplayer_32_sa.exe</code>
+</td>
+<td> <a href="/flashpoint/datahub/Curation_Tutorial" title="Curation Tutorial">Curation Tutorial</a>, <a href="/flashpoint/datahub/Flash_Curation" title="Flash Curation">Flash Curation</a>
+</td></tr>
+<tr>
+<td> Shockwave
+</td>
+<td> Adobe Shockwave Player
+</td>
+<td> <code>FPSoftware\Shockwave\PJ101\SPR.exe</code>
+</td>
+<td> <a href="/flashpoint/datahub/Shockwave_Curation" title="Shockwave Curation">Shockwave Curation</a>
+</td></tr>
+<tr>
+<td> HTML5
+</td>
+<td> HTML, HTML5, WebGL, or WebAssembly
+</td>
+<td> <code>FPSoftware\Basilisk-Portable\Basilisk-Portable.exe</code>
+</td>
+<td> <a href="/flashpoint/datahub/HTML5_Curation" title="HTML5 Curation">HTML5 Curation</a>
+</td></tr>
+<tr>
+<td> Java
+</td>
+<td> Java Applets
+</td>
+<td> <code>FPSoftware\startJava.bat</code>
+</td>
+<td> <a href="/flashpoint/datahub/Java_Curation" title="Java Curation">Java Curation</a>
+</td></tr>
+<tr>
+<td> Unity
+</td>
+<td> Unity Web Player
+</td>
+<td> <code>FPSoftware\startUnity.bat</code>
+</td>
+<td> <a href="/flashpoint/datahub/Unity_Curation" title="Unity Curation">Unity Curation</a>
+</td></tr>
+<tr>
+<td> Silverlight
+</td>
+<td> Microsoft Silverlight
+</td>
+<td> <code>FPSoftware\Basilisk-Portable\Basilisk-Portable.exe</code>
+</td>
+<td> <a href="/flashpoint/datahub/Silverlight_Curation" title="Silverlight Curation">Silverlight Curation</a>
+</td></tr>
+<tr>
+<td> 3DVIA Player
+</td>
+<td> 3DVIA Player, 3D Life Player, Virtools Player
+</td>
+<td> <code>FPSoftware\Basilisk-Portable\Basilisk-Portable.exe</code>
+</td>
+<td> <a href="/flashpoint/datahub/3DVIA_Curation" title="3DVIA Curation">3DVIA Curation</a>
+</td></tr>
+<tr>
+<td> 3D Groove GX
+</td>
+<td> 3D Groove GX
+</td>
+<td> <code>FPSoftware\startGroove.bat</code>
+</td>
+<td> <a href="/flashpoint/datahub/index.php?title=3D_Groove_GX_Curation&amp;action=edit&amp;redlink=1" class="new" title="3D Groove GX Curation (page does not exist)">3D Groove GX Curation</a>
+</td></tr>
+<tr>
+<td> ActiveX
+</td>
+<td> <i>Each game generally uses its own ActiveX control name</i>
+</td>
+<td> <code>FPSoftware\startActiveX.bat</code>
+</td>
+<td> <a href="/flashpoint/datahub/ActiveX_Curation" title="ActiveX Curation">ActiveX Curation</a>
+</td></tr>
+<tr>
+<td> Authorware
+</td>
+<td> Authorware Web Player
+</td>
+<td> <code>FPSoftware\Basilisk-Portable\Basilisk-Portable.exe</code>
+</td>
+<td> <a href="/flashpoint/datahub/index.php?title=Authorware_Curation&amp;action=edit&amp;redlink=1" class="new" title="Authorware Curation (page does not exist)">Authorware Curation</a>
+</td></tr>
+<tr>
+<td> ShiVa3D
+</td>
+<td> ShiVa3D Plugin
+</td>
+<td> <code>FPSoftware\startShiVa.bat</code>
+</td>
+<td> <a href="/flashpoint/datahub/ShiVa3D_Curation" title="ShiVa3D Curation">ShiVa3D Curation</a>
+</td></tr>
+<tr>
+<td> Viscape<span style="color:#ff0000">*</span>
+</td>
+<td> Superscape Viscape
+</td>
+<td> <code>FPSoftware\startSVR.bat</code>
+</td>
+<td> <a href="/flashpoint/datahub/index.php?title=Viscape_Curation&amp;action=edit&amp;redlink=1" class="new" title="Viscape Curation (page does not exist)">Viscape Curation</a>
+</td></tr>
+</table>
+<p><span style="color:#ff0000">*</span> means the platform will be added to the next Flashpoint version
+</p><p><b>Note:</b> PopCap Plugin and GoBit Games Plugin are also supported, but we already have every game for those technologies in Flashpoint.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20200429205513
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.012 seconds
+Real time usage: 0.012 seconds
+Preprocessor visited node count: 3/1000000
+Preprocessor generated node count: 8/1000000
+Post‐expand include size: 0/4194304 bytes
+Template argument size: 0/4194304 bytes
+Highest expansion depth: 1/40
+Expensive parser function count: 0/100
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+</div>
+<!-- Saved in parser cache with key flashpoint_db:pcache:idhash:113-0!canonical and timestamp 20200429205513 and revision id 2181
+ -->
+</div>					<div class="printfooter">
+						Retrieved from "<a dir="ltr" href="https://bluemaxima.org/flashpoint/datahub/index.php?title=Platforms&amp;oldid=2181">https://bluemaxima.org/flashpoint/datahub/index.php?title=Platforms&amp;oldid=2181</a>"					</div>
+				<div id="catlinks" class="catlinks catlinks-allhidden" data-mw="interface"></div>				<div class="visualClear"></div>
+							</div>
+		</div>
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" class="" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-createaccount"><a href="/flashpoint/datahub/index.php?title=Special:CreateAccount&amp;returnto=Platforms" title="You are encouraged to create an account and log in; however, it is not mandatory">Create account</a></li><li id="pt-login"><a href="/flashpoint/datahub/index.php?title=Special:UserLogin&amp;returnto=Platforms" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+														<li id="ca-nstab-main" class="selected"><span><a href="/flashpoint/datahub/Platforms" title="View the content page [c]" accesskey="c">Page</a></span></li>
+							<li id="ca-talk" class="new"><span><a href="/flashpoint/datahub/index.php?title=Talk:Platforms&amp;action=edit&amp;redlink=1" rel="discussion" title="Discussion about the content page [t]" accesskey="t">Discussion</a></span></li>
+						</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<h3 id="p-variants-label">
+							<span>Variants</span>
+						</h3>
+
+						<div class="menu">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+														<li id="ca-view" class="selected"><span><a href="/flashpoint/datahub/Platforms">Read</a></span></li>
+							<li id="ca-viewsource"><span><a href="/flashpoint/datahub/index.php?title=Platforms&amp;action=edit" title="This page is protected.&#10;You can view its source [e]" accesskey="e">View source</a></span></li>
+							<li id="ca-history" class="collapsible"><span><a href="/flashpoint/datahub/index.php?title=Platforms&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></span></li>
+						</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label">
+						<h3 id="p-cactions-label"><span>More</span></h3>
+
+						<div class="menu">
+							<ul>
+															</ul>
+						</div>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+
+						<form action="/flashpoint/datahub/index.php" id="searchform">
+							<div id="simpleSearch">
+							<input type="search" name="search" placeholder="Search Flashpoint Database" title="Search Flashpoint Database [f]" accesskey="f" id="searchInput"/><input type="hidden" value="Special:Search" name="title"/><input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>							</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="/flashpoint/datahub/Main_Page"  title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id='p-navigation' aria-labelledby='p-navigation-label'>
+			<h3 id='p-navigation-label'>Navigation</h3>
+
+			<div class="body">
+									<ul>
+						<li id="n-mainpage-description"><a href="/flashpoint/datahub/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-recentchanges"><a href="/flashpoint/datahub/Special:RecentChanges" title="A list of recent changes in the wiki [r]" accesskey="r">Recent changes</a></li><li id="n-randompage"><a href="/flashpoint/datahub/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li><li id="n-help"><a href="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents" title="The place to find out">Help</a></li>					</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id='p-tb' aria-labelledby='p-tb-label'>
+			<h3 id='p-tb-label'>Tools</h3>
+
+			<div class="body">
+									<ul>
+						<li id="t-whatlinkshere"><a href="/flashpoint/datahub/Special:WhatLinksHere/Platforms" title="A list of all wiki pages that link here [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="/flashpoint/datahub/Special:RecentChangesLinked/Platforms" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-specialpages"><a href="/flashpoint/datahub/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-print"><a href="/flashpoint/datahub/index.php?title=Platforms&amp;printable=yes" rel="alternate" title="Printable version of this page [p]" accesskey="p">Printable version</a></li><li id="t-permalink"><a href="/flashpoint/datahub/index.php?title=Platforms&amp;oldid=2181" title="Permanent link to this revision of the page">Permanent link</a></li><li id="t-info"><a href="/flashpoint/datahub/index.php?title=Platforms&amp;action=info" title="More information about this page">Page information</a></li>					</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+		<div id="footer" role="contentinfo">
+							<ul id="footer-info">
+											<li id="footer-info-lastmod"> This page was last edited on 13 February 2020, at 05:37.</li>
+									</ul>
+							<ul id="footer-places">
+											<li id="footer-places-privacy"><a href="/flashpoint/datahub/Flashpoint_Database:Privacy_policy" title="Flashpoint Database:Privacy policy">Privacy policy</a></li>
+											<li id="footer-places-about"><a href="/flashpoint/datahub/Flashpoint_Database:About" title="Flashpoint Database:About">About Flashpoint Database</a></li>
+											<li id="footer-places-disclaimer"><a href="/flashpoint/datahub/Flashpoint_Database:General_disclaimer" title="Flashpoint Database:General disclaimer">Disclaimers</a></li>
+									</ul>
+										<ul id="footer-icons" class="noprint">
+											<li id="footer-poweredbyico">
+							<a href="//www.mediawiki.org/"><img src="/flashpoint/datahub/resources/assets/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/flashpoint/datahub/resources/assets/poweredby_mediawiki_132x47.png 1.5x, /flashpoint/datahub/resources/assets/poweredby_mediawiki_176x62.png 2x" width="88" height="31"/></a>						</li>
+									</ul>
+						<div style="clear:both"></div>
+		</div>
+		<script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.012","walltime":"0.012","ppvisitednodes":{"value":3,"limit":1000000},"ppgeneratednodes":{"value":8,"limit":1000000},"postexpandincludesize":{"value":0,"limit":4194304},"templateargumentsize":{"value":0,"limit":4194304},"expansiondepth":{"value":1,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"timingprofile":["100.00%    0.000      1 -total"]},"cachereport":{"timestamp":"20200429205513","ttl":86400,"transientcontent":false}}});});</script><script>(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgBackendResponseTime":169});});</script>
+	</body>
+</html>

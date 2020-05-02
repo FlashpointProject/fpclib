@@ -9,4 +9,4 @@ About
 
 * **DarkMoe** for inspiring me with his hard work and many Curations.
 * **XXLuigiMario** for making the original AutoCurator.
-* **eientei** for bits and bobs of stuff.
+* **eientei** and **afrmtbl** for bits and bobs of stuff.

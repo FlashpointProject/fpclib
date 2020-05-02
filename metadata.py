@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, re
 
 def get_build():
     try:
@@ -14,7 +14,8 @@ if __name__ == '__main__':
         file.write(str(build))
 
 NAME = 'fpclib'
-VERSION = '1.2.0.' + get_build()
+RELEASE = '1.3.0.' + get_build()
+VERSION = re.match('\d+\.\d+', RELEASE).group(0)
 AUTHOR = 'mathgeniuszach'
 EMAIL = 'huntingmanzach@gmail.com'
 DESC = 'A powerful library for curating games for Flashpoint.'
@@ -31,4 +32,4 @@ CLASSIFIERS = [
 ]
 
 if __name__ == '__main__':
-    print('Building %s %s' % (NAME, VERSION))
+    print('Building %s %s' % (NAME, RELEASE))
