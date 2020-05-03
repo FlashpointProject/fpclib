@@ -355,13 +355,14 @@ def debug(text, mode, *items, pre='[INFO] '):
     
     :since 1.3:
     """
-    global TABULATION
+    global DEBUG_LEVEL, TABULATION
     if TABULATION < 0:
         TABULATION = 0
     if DEBUG_LEVEL < 0 or (DEBUG_LEVEL > 0 and (mode == 1 or (DEBUG_LEVEL > 1 and DEBUG_LEVEL - 1 > TABULATION))):
         tabs = '  ' * TABULATION
-        full_text = tabs + pre + text.format(*items)
+        full_texts = (tabs + pre + text.format(*items)).split('\n')
         
+        full_text = full_texts[0]
         length = len(full_text)
         columns = shutil.get_terminal_size()[0] - 1
         if length <= columns:
@@ -378,6 +379,15 @@ def debug(text, mode, *items, pre='[INFO] '):
                 i += available
                 length -= available
             print(tabs + full_text[i:].strip())
+        
+        if len(full_texts) > 1:
+            temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, -1
+            try:
+                e_pre = ' ' * len(pre)
+                for full_text in full_texts[1:]:
+                    debug(full_text, mode, pre=e_pre)
+            finally:
+                DEBUG_LEVEL = temp_debug
 
 def download(url, loc='', name=None, **kwargs):
     """Downloads the webpage or file at :code:`url` to the location :code:`loc`.
