@@ -777,6 +777,63 @@ def read_table(file_name, delimiter=',', ignore_lines=True):
         DEBUG_LEVEL = temp_debug
     return output
 
+def scan_dir(folder=None, regex=None, recursive=True):
+    """Scans the directory :code:`folder` recursively and returns all files and sub-folders as two lists.
+    
+    :param str folder: A directory to scan. Defaults to the current working directory.
+    :param str|re regex: If given, this function will only return files whose full paths match this regex. This has no effect on sub-folders.
+    :param bool recursive: If False, this function will not scan sub-folders recursively. You might be better off using :code:`os.walk()` if you set this to False.
+    
+    :returns: files and subfolders as two lists in that order. :code:`return files, subfolders`
+    
+    :raises InvalidCharacterError: If :code:`folder` contains invalid characters.
+    :raises FileExistsError: If :code:`folder` is not a folder.
+    :raises FileNotFoundError: If :code:`folder` does not exist.
+    
+    :note: Any slashes (:code:`/`) in file paths will be replaced with backslashes (:code:`\\`) in the output, and this is what regexes match with.
+    
+    :since 1.4:
+    """
+    if not folder:
+        folder = os.getcwd()
+    folder = folder.replace('/', '\\')
+    
+    if recursive:
+        debug('Scanning folder "{}" recursively', 2, folder, pre='[FUNC] ')
+    else:
+        debug('Scanning folder "{}"', 2, folder, pre='[FUNC] ')
+    
+    def scan(folder, r):
+        files, folders = [], []
+        for f in os.scandir(folder):
+            if f.is_dir():
+                folders.append(f.path)
+            elif r == None or r.fullmatch(f.path):
+                files.append(f.path)
+        return files, folders
+    
+    if isinstance(regex, str):
+        rext = re.compile(regex)
+    else:
+        rext = regex
+    
+    if INVALID_CHARS_NO_SLASH.search(folder) is not None:
+        raise InvalidCharacterError('Folder "' + folder + '" contains invalid characters.')
+    if os.path.exists(folder):
+        if os.path.isdir(folder):
+            files, folders = scan(folder, rext)
+            if recursive:
+                for f in folders:
+                    nf, no = scan(f, rext)
+                    files.extend(nf)
+                    folders.extend(no)
+            return files, folders
+        else:
+            raise FileExistsError('"' + folder + '" is not a folder.')
+    else:
+        raise FileNotFoundError('Could not find folder "' + folder + '"')
+    
+
 def make_dir(folder, change=False, overwrite=False):
     """Makes a folder at :code:`folder`, along will all parent folders.
     
@@ -972,6 +1029,64 @@ def write_table(file_name, table, delimiter=',', force=False):
             file.write('\n'.join([delimiter.join(line) for line in table]))
     finally:
         TABULATION -= 1
+
+def replace(files, old, new, regex=None, ignore_errs=True):
+    """Replaces all instances of :code:`old` with :code:`new` in :code:`files`.
+    
+    :param [str,....]|str files: A string or list of strings pointing to files to have their contents changed.
+    :param str|re old: A regex or string to replace. If this is a string, it will not be treated as a regex. Use :code:`re.compile()` to pass in a regex object.
+    :param str new: A string of text to replace with.
+    :param str|re regex: If given, this function will only replace in files whose full paths match this regex. It must be a real regex (i.e., you can't use "*" in place of ".*")!
+    :param bool ignore_errs: If False, this function will throw an error at the end if :code:`files` had invalid files.
+    
+    :raises: A bulk ValueError if :code:`files` has any invalid files and :code:`ignore_errs` is False. Errors will be thrown at the end of the function after everything that could be replaced was replaced.
+    
+    :since 1.4:
+    """
+    if isinstance(files, str):
+        file_names = [files]
+    else:
+        file_names = files
+    
+    debug('Replacing contents in {} files', 2, len(file_names), pre='[FUNC] ')
+    
+    errs = []
+    global DEBUG_LEVEL, TABULATION
+    temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, 0
+    try:
+        if isinstance(regex, str):
+            rext = re.compile(regex)
+        else:
+            rext = regex
+        
+        for file_name in file_names:
+            if rext != None and not rext.fullmatch(file_name):
+                continue
+            try:
+                with codecs.open(file_name, 'r', 'utf-8') as file:
+                    ct = file.read()
+                if isinstance(old, str):
+                    nct = ct.replace(old, new)
+                else:
+                    nct = old.sub(new, ct)
+                if nct != ct:
+                    with codecs.open(file_name, 'w', 'utf-8') as file:
+                        file.write(nct)
+            except Exception as e:
+                errs.append(e)
+    finally:
+        DEBUG_LEVEL = temp_debug
+    
+    if errs:
+        msg = '{} files had problems'.format(len(errs))
+        if ignore_errs:
+            TABULATION += 1
+            try:
+                debug(msg, 2, pre='[ERR] ')
+            finally:
+                TABULATION -= 1
+        else:
+            raise ValueError(msg)
 
 def hash256(obj):
     """Serializes :code:`obj` and then returns a sha256 HASH object of it.
