@@ -374,7 +374,7 @@
 <dt id="fpclib.INVALID_CHARS">
 <code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">INVALID_CHARS</code><a class="headerlink" href="#fpclib.INVALID_CHARS" title="Permalink to this definition">¶</a></dt>
 <dd><p>A compiled pattern that matches invalid charaters to be in a folder name.</p>
-<p><code class="code docutils literal notranslate"><span class="pre">re.compile(r'[/&lt;&gt;:\&quot;\\\|\?\*\x00-\x1F]')</span></code></p>
+<p><code class="code docutils literal notranslate"><span class="pre">re.compile(r'(?&lt;!^\w)[/&lt;&gt;:\&quot;\\\|\?\*\x00-\x1F]')</span></code></p>
 </dd></dl>
 
 </div>
@@ -384,7 +384,7 @@
 <dt id="fpclib.INVALID_CHARS_NO_SLASH">
 <code class="sig-prename descclassname">fpclib.</code><code class="sig-name descname">INVALID_CHARS_NO_SLASH</code><a class="headerlink" href="#fpclib.INVALID_CHARS_NO_SLASH" title="Permalink to this definition">¶</a></dt>
 <dd><p>A compiled pattern that matches invalid charaters to be in a folder name except forward and back-slashes.</p>
-<p><code class="code docutils literal notranslate"><span class="pre">re.compile(r'[&lt;&gt;:\&quot;\|\?\*\x00-\x1F]')</span></code></p>
+<p><code class="code docutils literal notranslate"><span class="pre">re.compile(r'(?&lt;!^\w)[&lt;&gt;:\&quot;\|\?\*\x00-\x1F]')</span></code></p>
 </dd></dl>
 
 </div>

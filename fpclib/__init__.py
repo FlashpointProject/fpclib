@@ -16,15 +16,15 @@ import traceback
 import stat
 import shutil
 
-INVALID_CHARS = re.compile(r'[/<>:\"\\\|\?\*\x00-\x1F]')
+INVALID_CHARS = re.compile(r'(?<!^\w)[/<>:\"\\\|\?\*\x00-\x1F]')
 """A compiled pattern that matches invalid charaters to be in a folder name.
 
-:code:`re.compile(r'[/<>:\\"\\\\\\|\\?\\*\\x00-\\x1F]')`
+:code:`re.compile(r'(?<!^\\w)[/<>:\\"\\\\\\|\\?\\*\\x00-\\x1F]')`
 """
-INVALID_CHARS_NO_SLASH = re.compile(r'[<>:\"\|\?\*\x00-\x1F]')
+INVALID_CHARS_NO_SLASH = re.compile(r'(?<!^\w)[<>:\"\|\?\*\x00-\x1F]')
 """A compiled pattern that matches invalid charaters to be in a folder name except forward and back-slashes.
 
-:code:`re.compile(r'[<>:\\"\\|\\?\\*\\x00-\\x1F]')`
+:code:`re.compile(r'(?<!^\\w)[<>:\\"\\|\\?\\*\\x00-\\x1F]')`
 """
 DATE = re.compile(r'^\d{4}(\-\d{2}){0,2}$')
 """A compiled pattern that matches properly formatted dates.
