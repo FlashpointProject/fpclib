@@ -1,5 +1,4 @@
 from collections.abc import Iterable
-from collections import OrderedDict
 from bs4 import BeautifulSoup
 from PIL import Image
 from ruamel import yaml
@@ -1092,9 +1091,11 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
                 errs.append((item, e, data))
             except KeyboardInterrupt as e:
                 debug('Interrupt received, terminating curation process (but not clearing save)', 1)
-                isave = False
-                errs.append((item, e, data))
-                break
+                if ignore_errs:
+                    errs.append((item, e, data))
+                    return errs
+                else:
+                    return None
             except Exception as e:
                 if not ignore_errs:
                     raise e
@@ -1198,9 +1199,11 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
                         errs.append((item, e, data))
                     except KeyboardInterrupt as e:
                         debug('Interrupt received, terminating curation process (but not clearing save)', 1)
-                        isave = False
-                        errs.append((item, e, data))
-                        break
+                        if ignore_errs:
+                            errs.append((item, e, data))
+                            return errs
+                        else:
+                            return None
                     except Exception as e:
                         if not ignore_errs:
                             raise e
@@ -1237,7 +1240,10 @@ def load(curation):
     
     data = yaml.round_trip_load(read(os.path.join(curation, 'meta.yaml')))
     c = Curation()
-    c.meta = data
+    c.meta = dict(data)
+    c.meta['Additional Applications'] = dict(c.meta['Additional Applications'])
+    for app in c.meta['Additional Applications']:
+        c.meta['Additional Applications'][app] = dict(c.meta['Additional Applications'][app])
     
     folder = curation.replace('\\', '/')
     if '/' in folder:
@@ -1338,30 +1344,30 @@ class Curation:
         :raises TypeError: If :code:`curation` is not an instance of :class:`Curation`.
         """
         if not curation:
-            self.meta = OrderedDict([
-                ('Title', None),
-                ('Alternate Titles', None),
-                ('Library', 'arcade'),
-                ('Series', None),
-                ('Developer', None),
-                ('Publisher', None),
-                ('Play Mode', 'Single Player'),
-                ('Release Date', None),
-                ('Version', None),
-                ('Languages', 'en'),
-                ('Extreme', 'No'),
-                ('Tags', None),
-                ('Source', None),
-                ('Platform', 'Flash'),
-                ('Status', 'Playable'),
-                ('Application Path', FLASH),
-                ('Launch Command', None),
-                ('Game Notes', None),
-                ('Original Description', None),
-                ('Curation Notes', None),
-                ('Additional Applications', OrderedDict())
-            ])
-            """An ordered dictionary containing all metadata for the curation. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead."""
+            self.meta = {
+                'Title': None,
+                'Alternate Titles': None,
+                'Library': 'arcade',
+                'Series': None,
+                'Developer': None,
+                'Publisher': None,
+                'Play Mode': 'Single Player',
+                'Release Date': None,
+                'Version': None,
+                'Languages': 'en',
+                'Extreme': 'No',
+                'Tags': None,
+                'Source': None,
+                'Platform': 'Flash',
+                'Status': 'Playable',
+                'Application Path': FLASH,
+                'Launch Command': None,
+                'Game Notes': None,
+                'Original Description': None,
+                'Curation Notes': None,
+                'Additional Applications': {}
+            }
+            """A dictionary containing all metadata for the curation. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead."""
             self.args = {}
             """A dictionary containing all arguments passed in through :func:`Curation.set_meta()` that do not map to any metadata. You can use this to pass in extra information that you want to use in :func:`Curation.parse()` or other methods for custom classes."""
             
@@ -1446,10 +1452,10 @@ class Curation:
         debug('Adding app "{}" to curation {}', 2, heading, str(self), pre='[FUNC] ')
         if heading.lower() in Curation.RESERVED_APPS:
             raise ValueError('You cannot create an additional app with the name"' + heading + '"')
-        self.meta['Additional Applications'][heading] = OrderedDict([
-            ('Application Path', path),
-            ('Launch Command', launch)
-        ])
+        self.meta['Additional Applications'][heading] = {
+            'Application Path': path,
+            'Launch Command': launch
+        }
     
     def add_ext(self, folder):
         """Add extras from folder.
