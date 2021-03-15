@@ -12,5 +12,8 @@ __pycache__
 /build
 build.txt
 
+# any sub build folder
+**/build
+
 # Upload script
 upload.bat
