@@ -1518,8 +1518,27 @@ class Curation:
         debug('Regenerating id for curation {}', 2, str(self), pre='[FUNC] ')
         self.id = str(uuid.uuid4())
     
+    def __setattr__(self, name, value):
+        if name in Curation.ARGS:
+            debug('Setting {} of curation {}', 2, name, str(self), pre='[FUNC] ')
+            if value == '':
+                self.meta[Curation.ARGS[name]] = None
+            else:
+                self.meta[Curation.ARGS[name]] = value
+        else:
+            object.__setattr__(self, name, value)
+    
+    def __getattr__(self, name):
+        if name in Curation.ARGS:
+            debug('Getting "{}" from curation {}', 2, name, str(self), pre='[FUNC] ')
+            return self.meta[Curation.ARGS[name]]
+        
+        raise AttributeError
+    
     def set_meta(self, **kwargs):
         """Set the metadata with :code:`kwargs`. This method does not do error checking.
+        
+        :since 1.4: You can also just set the metadata directly through the curation instead; e.g., :code:`curation.title = 'Title Goes Here'`
         
         :param ** kwargs: A list of arguments to set the metadata with. To see what you can use for :code:`kwargs`, see :attr:`Curation.ARGS`. Any value passed in that is not in :attr:`Curation.ARGS` will still be stored and can be retrieved through :func:`Curation.get_meta()`.
         
@@ -1537,6 +1556,8 @@ class Curation:
     
     def get_meta(self, key):
         """Get the metadata/args referenced by :code:`key`. 
+        
+        :since 1.4: You can also just get the metadata directly through the curation instead; e.g., :code:`myVar = curation.title`
         
         :param str key: The name of an argument to get the value of. You can either use the keys referenced by :attr:`Curation.ARGS` or the name of the argument you passed in through :func:`Curation.set_meta()`.
         
