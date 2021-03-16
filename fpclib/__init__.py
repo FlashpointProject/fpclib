@@ -668,11 +668,17 @@ def get_fpdata(page, ignore_errs=True):
         soup = get_soup('https://bluemaxima.org/flashpoint/datahub/' + page, ignore_errs=False)
             
         items = []
+        i = 0
+        if page == "Platforms": i = 1
+        
         for table in soup.find_all('table', class_='wikitable'):
             for row in table.find_all('tr')[1:]:
-                name = row.find('td').text.strip()
-                if name:
-                    items.append(name)
+                try:
+                    name = row.find_all('td')[i].text.strip()
+                    if name:
+                        items.append(name)
+                except:
+                    pass
         
         if page == 'Tags':
             items.extend([item.text for item in soup.find_all('span', class_='mw-headline') if item.text not in {'Themes', 'Content Warnings', 'Franchises', 'Game Engines'}])
