@@ -92,7 +92,7 @@ FLASH_PLAYERS = {
     9: 'FPSoftware\\Flash\\flashplayer9r277_win_sa.exe',
     -9: 'FPSoftware\\Flash\\9r16\\SAFlashPlayer.exe',
     -8: 'FPSoftware\\Flash\\8r22\\SAFlashPlayer.exe',
-    7: 'FPSoftware\\Flash\\flashplayer29_0r0_171_win_sa.exe',
+    7: 'FPSoftware\\Flash\\flashplayer_7_sa.exe',
     -7: 'FPSoftware\\Flash\\7r14\\SAFlashPlayer.exe',
     -6.21: 'FPSoftware\\Flash\\6r21\\SAFlashPlayer.exe',
     -6.4: 'FPSoftware\\Flash\\6r4\\SAFlashPlayer.exe',
@@ -119,7 +119,7 @@ Version Application Path
 9       FPSoftware\\\\Flash\\\\flashplayer9r277_win_sa.exe
 -9      FPSoftware\\\\Flash\\\\9r16\\\\SAFlashPlayer.exe
 -8      FPSoftware\\\\Flash\\\\8r22\\\\SAFlashPlayer.exe
-7       FPSoftware\\\\Flash\\\\flashplayer29_0r0_171_win_sa.exe
+7       FPSoftware\\\\Flash\\\\flashplayer_7_sa.exe
 -7      FPSoftware\\\\Flash\\\\7r14\\\\SAFlashPlayer.exe
 -6.21   FPSoftware\\\\Flash\\\\6r21\\\\SAFlashPlayer.exe
 -6.4    FPSoftware\\\\Flash\\\\6r4\\\\SAFlashPlayer.exe
@@ -250,12 +250,28 @@ LIBRARIES = {'arcade', 'theatre'}
 :since 1.3:
 """
 PLAY_MODES = {'Cooperative', 'Multiplayer', 'Single Player'}
-"""Set of all Flashpoint play modes. These may be combined with :code:`; `"""
+"""Set of all Flashpoint play modes. :code:`; ` can be used to combine them."""
 STATUSES = {'Hacked', 'Not Working', 'Partial', 'Playable', 'Hacked; Partial', 'Partial; Hacked'}
 """Set of all valid Flashpoint statuses.
 
 :since 1.3:
 """
+
+MONTHS = {
+    "Jan": "01",
+    "Feb": "02",
+    "Mar": "03",
+    "Apr": "04",
+    "May": "05",
+    "Jun": "06",
+    "Jul": "07", 
+    "Aug": "08",
+    "Sep": "09",
+    "Oct": "10",
+    "Nov": "11",
+    "Dec": "12"
+}
+"""A dictionary mapping three letter month codes to 2 number month codes."""
 
 DEBUG_LEVEL = 1
 """A global value that determines what debug information gets printed. This applies to the whole module, and you can modify it when you want to. Possible values:
@@ -1881,7 +1897,7 @@ class Curation:
             cmd = self.meta['Launch Command']
             if not cmd:
                 errors.append('Launch Command: missing')
-            elif normalize(cmd, False, True) != cmd:
+            elif (cmd[0] != '"') and (" " not in cmd) and normalize(cmd, False, True) != cmd:
                 errors.append('Launch Command: formatted incorrectly. Use HTTP and don\'t use web.archive.org')
             # Check Additional Applications
             problems = []
