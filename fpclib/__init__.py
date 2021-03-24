@@ -11,7 +11,6 @@ import os
 import re
 import uuid
 import pickle
-import traceback
 import stat
 import shutil
 
@@ -258,6 +257,30 @@ STATUSES = {'Hacked', 'Not Working', 'Partial', 'Playable', 'Hacked; Partial', '
 """
 
 MONTHS = {
+    "JANUARY": "01",
+    "FEBRUARY": "02",
+    "MARCH": "03",
+    "APRIL": "04",
+    "MAY": "05",
+    "JUNE": "06",
+    "JULY": "07",
+    "AUGUST": "08",
+    "SEPTEMBER": "09",
+    "OCTOBER": "10",
+    "NOVEMBER": "11",
+    "DECEMBER": "12",
+    "JAN": "01",
+    "FEB": "02",
+    "MAR": "03",
+    "APR": "04",
+    "MAY": "05",
+    "JUN": "06",
+    "JUL": "07", 
+    "AUG": "08",
+    "SEP": "09",
+    "OCT": "10",
+    "NOV": "11",
+    "DEC": "12",
     "Jan": "01",
     "Feb": "02",
     "Mar": "03",
@@ -271,7 +294,7 @@ MONTHS = {
     "Nov": "11",
     "Dec": "12"
 }
-"""A dictionary mapping three letter month codes to 2 number month codes."""
+"""A dictionary mapping uppercase month names to 2 number month codes."""
 
 DEBUG_LEVEL = 1
 """A global value that determines what debug information gets printed. This applies to the whole module, and you can modify it when you want to. Possible values:
@@ -1222,7 +1245,7 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
             debug('Curating index {}, "{}"', 1, i, item)
             TABULATION += 1
             try:
-                curation_class(url=item, **data).save(use_title, overwrite, validate=validate)
+                curation_class(url=item, **data).save(use_title, overwrite, True, validate=validate)
             except InvalidMetadataError as e:
                 debug('Skipping curation, {}', 1, str(e), pre='[WARN] ')
                 errs.append((item, e, data))
@@ -1330,7 +1353,7 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
                     debug('Curating index {}, "{}", with class "{}"', 1, i, item, link[1].__name__)
                     TABULATION += 1
                     try:
-                        link[1](url=item, **data).save(use_title, overwrite, validate=validate)
+                        link[1](url=item, **data).save(use_title, overwrite, True, validate=validate)
                     except InvalidMetadataError as e:
                         debug('Skipping curation, {}', 1, str(e), pre='[WARN] ')
                         errs.append((item, e, data))
@@ -1391,7 +1414,12 @@ def load(curation):
     return c
 
 class Curation:
-    """This is the base class for every kind of curation. If you want a good tutorial on how to use this class, see :doc:`The Basics </basics>`. Extend this class to redefine it's methods."""
+    """This is the base class for every kind of curation. If you want a good tutorial on how to use this class, see :doc:`The Basics </basics>`. Extend this class to redefine it's methods. Constructor:
+    
+    Accepts a single :class:`Curation` object as an argument or arguments in the same format as :func:`Curation.set_meta()`. The new curation will first have it's metadata, logo, screenshot, added args, and id deep-copied from :code:`curation`'s first if it's available, then have that data modified with :code:`kwargs` if available. This curation object will be linked to that curation object.
+        
+    :raises TypeError: If :code:`curation` is not an instance of :class:`Curation`.
+    """
     
     RESERVED_APPS = {'extras', 'message'}
     """A set containing all of the reserved headings that cannot be used in additional applications. The check is case-insensitive, hence they are lowercase."""
@@ -1476,10 +1504,6 @@ class Curation:
     """
     
     def __init__(self, curation=None, **kwargs):
-        """Accepts a single :class:`Curation` object as an argument or arguments in the same format as :func:`Curation.set_meta()`. The new curation will first have it's metadata, logo, screenshot, added args, and id deep-copied from :code:`curation`'s first if it's available, then have that data modified with :code:`kwargs` if available. This curation object will be linked to that curation object.
-        
-        :raises TypeError: If :code:`curation` is not an instance of :class:`Curation`.
-        """
         if not curation:
             self.meta = {
                 'Title': None,
@@ -1692,12 +1716,12 @@ class Curation:
         """
         download_image(url, name=file_name)
     
-    def save(self, use_title=False, overwrite=False, parse=True, validate=0, save_items=EVERYTHING):
+    def save(self, use_title=False, overwrite=False, parse=False, validate=0, save_items=EVERYTHING):
         """Save the curation to a folder with the name of :attr:`Curation.id`. Consecutive calls to this method will not overwrite the previous folder, but will instead save it as "Curation (2)", "Curation (3)", etc.
         
         :param str use_title: If True, the folder will be generated with the title of the curation instead of its id.
         :param bool overwrite: If True, this method will mix and overwrite files in existing curation folders instead of making the folder "Curation (2)", "Curation (3)", etc.
-        :param bool parse: *Added in 1.3*: If False, this function will not call :func:`Curation.parse()`.
+        :param bool parse: *Added in 1.3*: If True, this function will call :func:`Curation.parse()` before saving metadata.
         :param int validate: *Added in 1.3*: Mode to validate this curation's metadata with. 0 (default) means do not validate, 1 means flexibly validate, and 2 means rigidly validate.
         :param int save_items: Flags determining what items to save as part of this curation. By default this is :data:`EVERYTHING`. If you wanted to save only the meta and logo, for example, use :code:`save_items=META|LOGO`.
         
@@ -1993,6 +2017,102 @@ class BrokenCuration(Curation):
         finally:
             TABULATION -= 1
         return errs
+
+class DateParser:
+    """Initialize a regex-powered date parser that gets initialized with a specific format and can parse any date into the proper iso format. It does not check that the date is a real date. The constructor takes a string :code:`format` specifying a regex to search for in future parsed strings. Note that the regex is case insensitive. Use these macros in the format string to specify parts of the date:
+        
+    "<y>" for year number to match - replaced with the capture group "(?P<year>\d{4})",
+    "<m>" for month to match - replaced with the capture group "(?P<month>\d{1,3}|[A-Za-z]+)", and
+    "<d>" for day to match - replaced with the capture group "(?P<day>\d{1,3})"
+    
+    Month and day are optional, though using day requires using month. Note that the year, month, and day are automatically padded to the right number of zeros (4, 2, 2) automatically.
+    
+    If the macros don't quite work for you, feel free to use named capture groups and the callbacks "year", "month", and "day", which are called on the respective matched parts of a parsed string to turn it into the right number format to use in the returned string. If the "month" callback is not set, it defaults to :func:`DateParser.get_month`.
+    
+    :param str format: A string containing a regex and macros specifying how to parse strings.
+    :param func year: A function to turn the matched "year" part of a parsed date into the right number format.
+    :param func month: A function to turn the matched "month" part of a parsed date into the right number format.
+    :param func day: A function to turn the matched "day" part of a parsed date into the right number format.
+    
+    :raises ValueError: if the given format does not contain a "year" named group/macro or contains a "day" named group/macro without the "month" named group/macro.
+    
+    :since 1.6:
+    """
+    
+    def __init__(self, format, year=None, month=None, day=None):
+        text = format.\
+            replace("<y>", r"(?P<year>\d{4})").\
+            replace("<m>", r"(?P<month>\d{1,3}|[A-Za-z]+)").\
+            replace("<d>", r"(?P<day>\d{1,3})")
+        
+        if "(?P<year>" not in text or ("(?P<month>" not in text and "(?P<day>" in text):
+            raise ValueError("The given format is invalid")
+        
+        self.format = re.compile(text, re.I)
+        self.year = year
+        self.month = month or DateParser.get_month
+        self.day = day
+    
+    def get_month(s):
+        """The default method called to turn the matched "month" part of a parsed date into the right number format. It tries to to find the first three characters of the string put into uppercase in :data:`fpclib.MONTHS`, then just returns :code:`s` if it fails."""
+        if len(s) < 3: return s
+        try:
+            return MONTHS[s[:3].upper()]
+        except KeyError:
+            return s
+    
+    def parse(self, s):
+        """Uses this date format object to parse the given string :code:`s` into a proper iso date.
+        
+        :param str s: A string to parse for a date.
+        
+        :returns: An iso date parsed from string :code:`s`
+        
+        :raises ValueError: if no date in :code:`s` could be found.
+        """
+        match = self.format.search(s)
+        if not match: raise ValueError(f'No date in "{s}"')
+        
+        y = match["year"]
+        if not y: raise ValueError(f'No year in "{s}"')
+        try: m = match["month"]
+        except IndexError: m = None
+        try: d = match["day"]
+        except IndexError: d = None
+        
+        if d and not m: raise ValueError(f'Day but no month in "{s}"')
+        
+        if self.year:
+            year = self.year(y).zfill(4)
+        else:
+            year = y.zfill(4)
+        
+        if m:
+            if self.month:
+                month = "-" + self.month(m).zfill(2)
+            else:
+                month = "-" + m.zfill(2)
+        else:
+            month = ""
+        
+        if d:
+            if self.day:
+                day = "-" + self.day(d).zfill(2)
+            else:
+                day = "-" + d.zfill(2)
+        else:
+            day = ""
+        
+        return year + month + day
+
+DP_US = DateParser(r"<m>(\s*.??<d>\w*)?,?\s*.??<y>")
+"""A :class:`DateParser` that parses dates in the american format of "March 5th, 2016", "3/5/2016", "March 2016" or similar."""
+DP_UK = DateParser(r"(<d>\w*(\s*of)?\s*.??)?<m>,?\s*.??<y>")
+"""A :class:`DateParser` that parses dates in the european format of "5th of March, 2016", "5/3/2016", "March 2016" or similar."""
+DP_ISO = DateParser(r"<y>(\s*.??<m>)?(\s*.??<d>\w*)?")
+"""A :class:`DateParser` that parses dates in the format of "2016 March 5th" or similar."""
+
+
 if __name__ == '__main__':
     test()
     
