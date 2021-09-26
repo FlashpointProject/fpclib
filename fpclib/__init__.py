@@ -440,8 +440,7 @@ def download(url, loc='', name=None, **kwargs):
     TABULATION += 1
     try:
         rurl = normalize(url, True, True, True)
-        raw = rurl
-        raw = WAYBACK_LINK.sub('', raw)
+        raw = WAYBACK_LINK.sub('', rurl)
         if PROTOCOL.search(raw) is not None:
             raw = PROTOCOL.sub('', raw)
         if '?' in raw:
@@ -505,8 +504,8 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
                     url = item
                     data = {}
                 
-                rurl = normalize(url, preserve, True, True)
-                raw = rurl
+                rurl = normalize(url, True, True, True)
+                raw = rurl if preserve else normalize(url, False, True, True)
                 url_vars = ''
                 if PROTOCOL.search(raw) is not None:
                     raw = PROTOCOL.sub('', raw)
@@ -1566,7 +1565,6 @@ class Curation:
     
     def __setattr__(self, name, value):
         if name in Curation.ARGS:
-            debug('Setting {} of curation {}', 2, name, str(self), pre='[FUNC] ')
             if value == '':
                 self.meta[Curation.ARGS[name]] = None
             else:
@@ -1576,7 +1574,6 @@ class Curation:
     
     def __getattr__(self, name):
         if name in Curation.ARGS:
-            debug('Getting "{}" from curation {}', 2, name, str(self), pre='[FUNC] ')
             return self.meta[Curation.ARGS[name]]
         
         raise AttributeError
@@ -1590,7 +1587,6 @@ class Curation:
         
         :note: For example, to set the title of a curation you would use :code:`curation.set_meta(title='Title Goes Here')`
         """
-        debug('Setting metadata of curation {}', 2, str(self), pre='[FUNC] ')
         for arg in kwargs:
             if arg in Curation.ARGS:
                 if kwargs[arg] == '':
@@ -1609,7 +1605,6 @@ class Curation:
         
         :returns: The meta referenced by :code:`key`, the data associated with it, or None if it hasn't been set.
         """
-        debug('Getting "{}" from curation {}', 2, key, str(self), pre='[FUNC] ')
         try:
             if key in Curation.ARGS:
                 return self.meta[Curation.ARGS[key]]
