@@ -680,7 +680,7 @@ def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
     try:
         rurl = normalize(url, True, True, True)
         with requests.get(rurl, **kwargs) as response:
-            soup = BeautifulSoup(response.text, parser)
+            soup = BeautifulSoup(response.content, parser)
         return soup
     except Exception as e:
         if ignore_errs:
@@ -2110,4 +2110,3 @@ DP_ISO = DateParser(r"<y>(\s*.??<m>)?(\s*.??<d>\w*)?")
 
 if __name__ == '__main__':
     test()
-    
