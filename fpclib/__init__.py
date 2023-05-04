@@ -200,23 +200,50 @@ Version        Application Path
 SHOCKWAVE = SHOCKWAVE_PLAYERS[0]
 """A shorthand for :code:`SHOCKWAVE_PLAYERS[0]`"""
 UNITY = 'FPSoftware\\startUnity.bat'
-"""Application path for Unity. Normally you should use :data:`SECURE_PLAYER` instead."""
+"""Application path for Unity."""
 ACTIVE_X = 'FPSoftware\\startActiveX.bat'
-"""Application path for ActiveX. Normally you should use :data:`SECURE_PLAYER` instead.
+"""Application path for ActiveX.
 
 :since 1.3:
 """
 GROOVE = 'FPSoftware\\startGroove.bat'
-"""Application path for 3D Groove GX. Normally you should use :data:`SECURE_PLAYER` instead.
+"""Application path for 3D Groove GX.
 
 :since 1.3:
 """
 SVR = 'FPSoftware\\startSVR.bat'
-"""Application path for Viscape. Normally you should use :data:`SECURE_PLAYER` instead.
+"""Application path for Viscape.
 
 :since 1.3:
 """
-APPLICATIONS = [SECURE_PLAYER, JAVA, JAVA_IN_BROWSER, BASILISK, UNITY, ACTIVE_X, GROOVE, SVR]
+SHIVA3D = "FPSoftware\startShiVa.bat"
+"""Application path for ShiVa3D
+
+:since 1.7:
+"""
+
+BROWSER_MODE = ':browser_mode:'
+"""Application path for Flashpoint Browser Mode.
+
+:since 1.7:
+"""
+CHROME = 'FPSoftware\startChrome.bat'
+"""Application path for Chrome.
+
+:since 1.7:
+"""
+NETSCAPE = 'FPSoftware\startNetscape.bat'
+"""Application path for Netscape.
+
+:since 1.7:
+"""
+
+APPLICATIONS = [
+    SECURE_PLAYER,
+    UNITY, JAVA, JAVA_IN_BROWSER,
+    BASILISK, BROWSER_MODE, CHROME, NETSCAPE,
+    ACTIVE_X, GROOVE, SVR, SHIVA3D
+]
 """A set of all valid application paths.
 
 :since 1.3:
@@ -680,7 +707,8 @@ def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
     try:
         rurl = normalize(url, True, True, True)
         with requests.get(rurl, **kwargs) as response:
-            soup = BeautifulSoup(response.content, parser)
+            # Screw weird ascii pages
+            soup = BeautifulSoup(response.content.decode("utf-8"), parser)
         return soup
     except Exception as e:
         if ignore_errs:
@@ -977,7 +1005,9 @@ def write(file_name, contents='', force=False):
         else:
             raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
     
-    if not isinstance(contents, str) and isinstance(contents, Iterable):
+    if isinstance(contents, bytes):
+        output = contents.decode('utf-8')
+    elif not isinstance(contents, str) and isinstance(contents, Iterable):
         output = '\n'.join(contents)
     else:
         output = contents

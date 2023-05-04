@@ -14,7 +14,7 @@ if __name__ == '__main__':
         file.write(str(build))
 
 NAME = 'fpclib'
-RELEASE = '1.6.1.' + get_build()
+RELEASE = '1.7.0.' + get_build()
 VERSION = re.match('\d+\.\d+', RELEASE).group(0)
 AUTHOR = 'mathgeniuszach'
 EMAIL = 'huntingmanzach@gmail.com'
