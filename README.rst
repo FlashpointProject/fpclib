@@ -40,7 +40,7 @@ You can also test the library by running the script directly or with :code:`fpcl
 More Reading
 ============
 
-You can read more about this library in the `official documentation <https://xmgzx.github.io/apps/fpclib/>`_.
+You can read more about this library in the `official documentation <https://xmgzx.github.io/bin/fpclib/>`_.
 
 Usage
 =====
