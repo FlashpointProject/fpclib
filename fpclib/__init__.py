@@ -237,11 +237,16 @@ NETSCAPE = 'FPSoftware\startNetscape.bat'
 
 :since 1.7:
 """
+FPNAVIGATOR = 'FPSoftware\\fpnavigator-portable\\FPNavigator.exe'
+"""Application path for Flashpoint Navigator.
+
+:since 1.8:
+"""
 
 APPLICATIONS = [
     SECURE_PLAYER,
     UNITY, JAVA, JAVA_IN_BROWSER,
-    BASILISK, BROWSER_MODE, CHROME, NETSCAPE,
+    BASILISK, BROWSER_MODE, CHROME, NETSCAPE, FPNAVIGATOR,
     ACTIVE_X, GROOVE, SVR, SHIVA3D
 ]
 """A set of all valid application paths.
