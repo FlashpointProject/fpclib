@@ -2,19 +2,13 @@
 __pycache__
 *.pyc
 
-# Setuptools distribution folder.
-/dist/
-
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
 
-# Build folder and version
+# Build stuff
+/dist
 /build
+**/build
 build.txt
 auth
-
-# any sub build folder
-**/build
-
-# Upload script
-upload.bat
+poetry.lock
