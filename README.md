@@ -43,22 +43,9 @@ You can read more about this library in the [official documentation](https://www
 
 ## Usage
 
-You can install the library with:
-```
-pip install fpclib
-```
+fpclib is available on pypi or pip; however, it requires a specific version of ruamel.yaml in order to run.
 
-or you can put the "fpclib" script (check the releases page) in the same directory as your script.
-
-If you choose the second option, you'll also need to install these libraries through pip:
-```
-pip install requests
-pip install beautifulsoup4
-pip install pillow
-pip install ruamel.yaml
-```
-
-Once you have all of that set up, you can put `import fpclib` at the top of your script to use it's methods.
+It is recommended that you install fpclib with poetry (`poetry add fpclib`) or something like pipx (`pipx install fpclib`) to run it properly.
 
 ## License
 
