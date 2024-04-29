@@ -11,6 +11,7 @@ __pycache__
 # Build folder and version
 /build
 build.txt
+auth
 
 # any sub build folder
 **/build

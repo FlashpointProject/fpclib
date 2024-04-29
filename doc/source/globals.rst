@@ -37,7 +37,7 @@ Regexes
 
 :hide:`WAYBACK_LINK`
 ^^^^^^^^^^^^^^^^^^^^
-   
+
 .. autodata:: WAYBACK_LINK
    :annotation:
 
@@ -135,6 +135,31 @@ Application Paths
 ^^^^^^^^^^^
 
 .. autodata:: SVR
+
+:hide:`SHIVA3D`
+^^^^^^^^^^^^^^^
+
+.. autodata:: SHIVA3D
+
+:hide:`BROWSER_MODE`
+^^^^^^^^^^^^^^^^^^^^
+
+.. autodata:: BROWSER_MODE
+
+:hide:`CHROME`
+^^^^^^^^^^^^^^
+
+.. autodata:: CHROME
+
+:hide:`NETSCAPE`
+^^^^^^^^^^^^^^^^
+
+.. autodata:: NETSCAPE
+
+:hide:`FPNAVIGATOR`
+^^^^^^^^^^^^^^^^^^^
+
+.. autodata:: FPNAVIGATOR
 
 :hide:`APPLICATIONS`
 ^^^^^^^^^^^^^^^^^^^^

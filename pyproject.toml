@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "fpclib"
+version = "1.8.0"
+description = "A powerful library for curating games for Flashpoint."
+authors = ["mathgeniuszach <huntingmanzach@gmail.com>"]
+license = "CC BY-NC-SA 4.0"
+readme = "README.rst"
+
+repository = "https://github.com/xMGZx/fpclib"
+homepage = "https://www.mathgeniuszach.com/"
+classifiers = [
+    "Programming Language :: Python :: 3"
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+beautifulsoup4 = "^4.12.3"
+requests = "^2.31.0"
+pillow = "^10.3.0"
+ruamel-yaml = "^0.18.6"
+
+[tool.poetry.group.dev.dependencies]
+toml = "^0.10.2"
+sphinx = "^7.3.7"
+sphinx-rtd-theme = "^2.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks.clean]
+script = "scripts:clean"
+[tool.poe.tasks.docs]
+script = "scripts:docs"
+[tool.poe.tasks.build]
+script = "scripts:build"
+[tool.poe.tasks.reset-build]
+script = "scripts:resetbuild"
+[tool.poe.tasks.upload]
+script = "scripts:upload"

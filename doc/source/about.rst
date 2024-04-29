@@ -7,6 +7,7 @@ About
 | **Version**: |version|
 | **Special Thanks**:
 
-* **DarkMoe** for inspiring me with his hard work and many Curations.
+* **DarkMoe** for inspiring this project with his hard work and many Curations.
 * **XXLuigiMario** for making the original AutoCurator.
-* **eientei** and **afrmtbl** for bits and bobs of stuff.
+* **prostagma** for actively reporting bugs, adding features, and site definitions to fpcurator.
+* **Luvexina**, **eientei**, **afrmtbl** for bits and bobs of stuff.

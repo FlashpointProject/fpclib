@@ -12,16 +12,18 @@
 #
 import os
 import sys
+import toml
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath('../../'))
-import metadata
-
+project = toml.load(Path(__file__).parent.parent.parent / "pyproject.toml")
+metadata = project["tool"]["poetry"]
 
 # -- Project information -----------------------------------------------------
 
-project = metadata.NAME
-author = metadata.AUTHOR
-release = metadata.VERSION
+project = metadata["name"]
+author = metadata["authors"][0].split()[0]
+release = metadata["version"]
 
 # -- General configuration ---------------------------------------------------
 
@@ -77,4 +79,4 @@ rst_epilog = """
 
 .. |version| replace:: %s
 
-""" % (metadata.NAME, metadata.AUTHOR, metadata.RELEASE)
+""" % (project, author, release)

@@ -216,7 +216,7 @@ SVR = 'FPSoftware\\startSVR.bat'
 
 :since 1.3:
 """
-SHIVA3D = "FPSoftware\startShiVa.bat"
+SHIVA3D = "FPSoftware\\startShiVa.bat"
 """Application path for ShiVa3D
 
 :since 1.7:
@@ -227,21 +227,26 @@ BROWSER_MODE = ':browser_mode:'
 
 :since 1.7:
 """
-CHROME = 'FPSoftware\startChrome.bat'
+CHROME = 'FPSoftware\\startChrome.bat'
 """Application path for Chrome.
 
 :since 1.7:
 """
-NETSCAPE = 'FPSoftware\startNetscape.bat'
+NETSCAPE = 'FPSoftware\\startNetscape.bat'
 """Application path for Netscape.
 
 :since 1.7:
+"""
+FPNAVIGATOR = 'FPSoftware\\fpnavigator-portable\\FPNavigator.exe'
+"""Application path for Flashpoint Navigator.
+
+:since 1.8:
 """
 
 APPLICATIONS = [
     SECURE_PLAYER,
     UNITY, JAVA, JAVA_IN_BROWSER,
-    BASILISK, BROWSER_MODE, CHROME, NETSCAPE,
+    BASILISK, BROWSER_MODE, CHROME, NETSCAPE, FPNAVIGATOR,
     ACTIVE_X, GROOVE, SVR, SHIVA3D
 ]
 """A set of all valid application paths.
@@ -276,7 +281,9 @@ LIBRARIES = {'arcade', 'theatre'}
 :since 1.3:
 """
 PLAY_MODES = {'Cooperative', 'Multiplayer', 'Single Player'}
-"""Set of all Flashpoint play modes. :code:`; ` can be used to combine them."""
+"""Set of all Flashpoint play modes. :code:`; ​` (a semi-colon followed by a space) can be used to combine them."""
+# HACK: There is a zero-width-space between the space and the ending `. This is to trick sphinx into finding the end quote.
+# An older version of sphinx could handle this fine, but this was a necessary hack in the newer versions.
 STATUSES = {'Hacked', 'Not Working', 'Partial', 'Playable', 'Hacked; Partial', 'Partial; Hacked'}
 """Set of all valid Flashpoint statuses.
 
@@ -302,7 +309,7 @@ MONTHS = {
     "APR": "04",
     "MAY": "05",
     "JUN": "06",
-    "JUL": "07", 
+    "JUL": "07",
     "AUG": "08",
     "SEP": "09",
     "OCT": "10",
@@ -314,7 +321,7 @@ MONTHS = {
     "Apr": "04",
     "May": "05",
     "Jun": "06",
-    "Jul": "07", 
+    "Jul": "07",
     "Aug": "08",
     "Sep": "09",
     "Oct": "10",
@@ -362,16 +369,16 @@ class EmptyLocationError(ValueError):
     pass
 class InvalidMetadataError(ValueError):
     """An error caused when a curation has invalid metadata.
-    
+
     :since 1.3:
     """
     pass
 
 def test():
     """Tests the library to make sure it works.
-    
+
     This test will curate "Interactive Buddy" and download the swf file linked in the launch command into the proper place in a folder in the working directory, while also testing basic validation.
-    
+
     :raises AssertionError: If the test gives back any errors.
     """
     print('Testing curation abilities.\n')
@@ -383,7 +390,7 @@ def test():
         tc = TestCuration()
         tc.save()
         delete(tc.id)
-        
+
         bc = BrokenCuration()
         bc.parse(None)
         assert len(bc.get_errors()) == 13
@@ -398,9 +405,9 @@ def test():
 
 def update():
     """Initializes or updates variables that are generated from online. The only ones are :data:`PLATFORMS` and :data:`TAGS`.
-    
+
     This method is only automatically called by :func:`Curation.validate()` if `rigid` is True and either :data:`PLATFORMS` or :data:`TAGS` are not set. You must call this function manually if you want to access :data:`PLATFORMS` or :data:`TAGS` before then.
-    
+
     :since 1.3:
     """
     debug('Getting updated Platforms and Tags', 2, pre='[FUNC] ')
@@ -412,12 +419,12 @@ def update():
 
 def debug(text, mode, *items, pre='[INFO] '):
     """Prints :code:`text` depending on :code:`mode` and :data:`DEBUG_LEVEL`.
-    
+
     :param str text: A string of text to print.
     :param int mode: :code:`text` will only be printed in two cases: if this is 1 and :data:`DEBUG_LEVEL` > 0 - or if this is 2, :data:`DEBUG_LEVEL` is 2 or higher, and :code:`DEBUG_LEVEL - 1 > TABULATION`.
     :param * items: Any number of items to format :code:`text` with. Uses :code:`str.format()`.
     :param str pre: This is a prefix of text to print to the left of :code:`text`. This must be a key argument.
-    
+
     :since 1.3:
     """
     global DEBUG_LEVEL, TABULATION
@@ -426,7 +433,7 @@ def debug(text, mode, *items, pre='[INFO] '):
     if DEBUG_LEVEL < 0 or (DEBUG_LEVEL > 0 and (mode == 1 or (DEBUG_LEVEL > 1 and DEBUG_LEVEL - 1 > TABULATION))):
         tabs = '  ' * TABULATION
         full_texts = (tabs + pre + text.format(*items)).split('\n')
-        
+
         full_text = full_texts[0]
         length = len(full_text)
         columns = shutil.get_terminal_size()[0] - 1
@@ -444,7 +451,7 @@ def debug(text, mode, *items, pre='[INFO] '):
                 i += available
                 length -= available
             print(tabs + full_text[i:].strip())
-        
+
         if len(full_texts) > 1:
             temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, -1
             try:
@@ -456,7 +463,7 @@ def debug(text, mode, *items, pre='[INFO] '):
 
 def download(url, loc='', name=None, **kwargs):
     """Downloads the webpage or file at :code:`url` to the location :code:`loc`.
-    
+
     :param str url: A url pointing to a file to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param str name: If specified, the file will be saved with this name instead of an automatically generated one.
@@ -472,7 +479,7 @@ def download(url, loc='', name=None, **kwargs):
             raw = PROTOCOL.sub('', raw)
         if '?' in raw:
             raw = raw[:raw.index('?')]
-        
+
         if name:
             file_name = name
         else:
@@ -480,12 +487,12 @@ def download(url, loc='', name=None, **kwargs):
                 file_name = 'index.html'
             else:
                 file_name = raw[raw.rfind('/')+1:]
-        
+
         if loc:
             debug('Downloading "{}" from "{}" to "{}"', 2, file_name, rurl, loc)
         else:
             debug('Downloading "{}" from "{}"', 2, file_name, rurl)
-        
+
         with requests.get(rurl, **kwargs) as response:
             if loc:
                 make_dir(loc)
@@ -497,15 +504,15 @@ def download(url, loc='', name=None, **kwargs):
 
 def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=False):
     """Downloads a list of files with their website folder structure to the location :code:`loc`.
-    
+
     For those that are familiar with cURLsDownloader, this function acts in a similar way. Invalid characters for a file/folder name will be replaced with "_", but "://" will be replaced with ".".
-    
+
     :param [str|(str,dict),....] urls: A list of urls pointing to files to be downloaded. *Since 1.2*, if a url is a tuple instead of a string, the first item in the tuple will be read as the url and the second will be read a dictionary of arguments to request with. The dictionary of arguments is in a similar format to the arguments :code:`requests.get()` uses, but without the url parameter.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param bool preserve: If True, any files from "web.archive.org" will stay in the "web.archive.org" folder. By default, files are moved to their original domains with any port numbers removed.
     :param bool keep_vars: If True, files will be saved with all urlvars intact in their file name. This prevents files such as "http://www.example.com/game.php?id=123" and "http://www.example.com/game.php?id=321" from overwriting each other. Question marks are replaced with "_".
     :param bool ignore_errs: If True, any errors will be ignored and returned as part of a tuple including the urls that failed alongside each error.
-    
+
     :returns: None or a list of tuples including failed urls and errors.
     """
     debug('Call to download {} files or webpages', 2, len(urls), pre='[FUNC] ')
@@ -530,7 +537,7 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
                 else:
                     url = item
                     data = {}
-                
+
                 rurl = normalize(url, True, True, True)
                 raw = rurl if preserve else normalize(url, False, True, True)
                 url_vars = ''
@@ -539,16 +546,16 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
                 if '?' in raw:
                     url_vars = raw[raw.index('?'):]
                     raw = raw[:raw.index('?')]
-                
+
                 if raw.endswith('/'):
                     raw += 'index.html'
                 elif '/' not in raw:
                     raw += '/index.html'
                 if keep_vars and url_vars:
                     raw += url_vars
-                
+
                 raw = INVALID_CHARS_NO_SLASH.sub('_', raw.replace('://', '.'))
-                
+
                 debug('Downloading "{}" from "{}"', 2, raw, rurl)
                 TABULATION += 1
                 try:
@@ -571,13 +578,13 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
         TABULATION -= 1
         if loc:
             os.chdir(cwd)
-    
+
     if ignore_errs:
         return errs
 
 def download_image(url, loc='', name=None, **kwargs):
     """Downloads the image from :code:`url` to the location :code:`loc` as a PNG file.
-    
+
     :param str url: A url pointing to the image to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param str name: If specified, the file will be saved with this name instead of an automatically generated one.
@@ -594,7 +601,7 @@ def download_image(url, loc='', name=None, **kwargs):
             raw = PROTOCOL.sub('', raw)
         if '?' in raw:
             raw = raw[:raw.index('?')]
-        
+
         if name:
             file_name = name
         else:
@@ -606,12 +613,12 @@ def download_image(url, loc='', name=None, **kwargs):
                     file_name = EXTENSION.sub('.png', file_name)
                 else:
                     file_name += '.png'
-        
+
         if loc:
             debug('Downloading image "{}" from "{}" to "{}"', 2, file_name, rurl, loc)
         else:
             debug('Downloading image "{}" from "{}"', 2, file_name, rurl)
-        
+
         TABULATION += 1
         try:
             with requests.get(rurl, **kwargs) as response:
@@ -621,26 +628,26 @@ def download_image(url, loc='', name=None, **kwargs):
                     file_name = os.path.join(loc, file_name)
         finally:
             TABULATION -= 1
-        
+
         img.save(file_name, format='PNG')
     finally:
         TABULATION -= 1
-    
+
 def normalize(url, preserve=True, keep_vars=False, keep_prot=False):
     """Formats :code:`url` to a normalized format.
-    
+
     This involves making it use the http protocol, fixing escaped slashes (:code:`\\/`), removing url vars, and stripping it. Accepts strings starting with any protocol, no protocol, "//", or "/".
-    
+
     :param str url: A string url to format.
     :param bool preserve: If False and the url is from "web.archive.org", the url will be formatted to it's original domain without the "web.archive.org" prefix.
     :param bool keep_vars: If True, url vars at the end of the string will stay on the string.
     :param bool keep_prot: If True, the url protocol will not be made to use the http protocol unless there is no protocol given or the protocol is formatted incorrectly.
-    
+
     :returns: :code:`url` in a normalized format, or None if :code:`url` is None.
     """
     if url == None:
         return None
-    
+
     rurl = url.replace('\\/', '/').strip()
     if not keep_vars and '?' in rurl:
         rurl = rurl[:rurl.find('?')]
@@ -656,17 +663,17 @@ def normalize(url, preserve=True, keep_vars=False, keep_prot=False):
         rurl = 'http://' + rurl
     if rurl != url:
         debug('Normalized url "{}" to "{}"', 2, url, rurl, pre='[FUNC] ')
-    
+
     return rurl
 
 def read_url(url, ignore_errs=True, content=False, **kwargs):
     """Reads the webpage or file at :code:`url` and returns its contents as a text string.
-    
+
     :param str url: A string url of a webpage or file.
     :param bool ignore_errs: *Added in 1.3*: If False, instead of returning None on any errors, those errors will be raised.
     :param bool content: *Added in 1.3* If True, this function will return the contents of the webpage or file as a byte string instead of reading it as text (:code:`response.content` instead of :code:`response.text`).
     :param ** kwargs: *Added in 1.2*: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
-    
+
     :returns: The contents of the webpage at :code:`url` as a string or None if the url is blank.
     """
     debug('Call to read "{}"', 2, url, pre='[FUNC] ')
@@ -691,12 +698,12 @@ def read_url(url, ignore_errs=True, content=False, **kwargs):
 
 def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
     """Reads the webpage at :code:`url` and creates a BeautifulSoup object with it.
-    
+
     :param str url: A string url of a webpage.
     :param str parser: The BeautifulSoup parser to use.
     :param bool ignore_errs: *Added in 1.3*: If False, instead of returning None on any errors, those errors will be raised.
     :param ** kwargs: *Added in 1.2*: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
-    
+
     :returns: A BeautifulSoup object created from :code:`url` or None if the url is blank or there was an error and :code:`ignore_errs` is True.
     """
     debug('Getting soup object for "{}"', 2, url, pre='[FUNC] ')
@@ -719,12 +726,12 @@ def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
 
 def get_fpdata(page, ignore_errs=True):
     """Reads the Flashpoint online datahub at :code:`https://bluemaxima.org/flashpoint/datahub/{page}` and returns a list of possible values; you can use this to get the most up-to-date tags, platforms, games, or animations.
-    
+
     :param str page: Can be "Platforms", "Tags", "Game_Master_List", "Animation_Master_List", or any other page on the datahub with tables in it.
     :param bool ignore_errs: If False, instead of returning None on any errors, those errors will be raised.
-    
+
     :returns: A list of all Platforms, Tags, Games, Animations, etc. depending on each page.
-    
+
     :since 1.3:
     """
     debug('Getting "{}" from Flashpoint datahub', 2, page, pre='[FUNC] ')
@@ -732,11 +739,11 @@ def get_fpdata(page, ignore_errs=True):
     TABULATION += 1
     try:
         soup = get_soup('https://bluemaxima.org/flashpoint/datahub/' + page, ignore_errs=False)
-            
+
         items = []
         i = 0
         if page == "Platforms": i = 1
-        
+
         for table in soup.find_all('table', class_='wikitable'):
             for row in table.find_all('tr')[1:]:
                 try:
@@ -745,7 +752,7 @@ def get_fpdata(page, ignore_errs=True):
                         items.append(name)
                 except:
                     pass
-        
+
         if page == 'Tags':
             items.extend([item.text for item in soup.find_all('span', class_='mw-headline') if item.text not in {'Themes', 'Content Warnings', 'Franchises', 'Game Engines'}])
         elif page in ["Game_Master_List", "Animation_Master_List"]:
@@ -763,14 +770,14 @@ def get_fpdata(page, ignore_errs=True):
         TABULATION -= 1
 
 def read(file_name):
-    """Reads the contents of the file :code:`file_name` into a string. 
-    
+    """Reads the contents of the file :code:`file_name` into a string.
+
     The returned string is in utf-8.
-    
+
     :param str file_name: The location/name of a file in the local file system.
-    
+
     :returns: The contents of the file :code:`file_name` as a string.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If :code:`file_name` is not a file.
@@ -783,21 +790,21 @@ def read(file_name):
         raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
     if os.path.exists(file_name) and not os.path.isfile(file_name):
         raise InvalidFileError('"' + file_name + '" is not a file and cannot be read from.')
-    
+
     with codecs.open(file_name, 'r', 'utf-8') as file:
         contents = file.read()
     return contents
 
 def read_lines(file_name, ignore_lines=True):
     """Reads the lines of the file :code:`file_name` into a list of strings split by any new line character (:code:`\\r\\n`, :code:`\\r`, or :code:`\\n`).
-    
+
     The returned strings are in utf-8.
-    
+
     :param str file_name: The location/name of a file in the local file system.
     :param bool ignore_lines: By default this function disregards empty lines at the end of the file. Set this to False to disable that.
-    
+
     :returns: A list of strings containing all of the lines in the file :code:`file_name`.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If :code:`file_name` is not a file.
@@ -810,7 +817,7 @@ def read_lines(file_name, ignore_lines=True):
         raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
     if os.path.exists(file_name) and not os.path.isfile(file_name):
         raise InvalidFileError('"' + file_name + '" is not a file and cannot be read from.')
-    
+
     with codecs.open(file_name, 'r', 'utf-8') as file:
         lines = file.read().replace('\r\n', '\n').replace('\r', '\n').split('\n')
     if ignore_lines:
@@ -822,17 +829,17 @@ def read_lines(file_name, ignore_lines=True):
 
 def read_table(file_name, delimiter=',', ignore_lines=True):
     """Reads the contents of the file :code:`file_name` into a two dimensional list of strings with rows split by any new line character (:code:`\\r\\n`, :code:`\\r`, or :code:`\\n`) and columns split by :code:`delimiter`.
-    
+
     The returned strings are in utf-8.
-    
+
     :note: This function disregards empty lines at the end of the file.
-    
+
     :param str file_name: The location/name of a file in the local file system.
     :param str delimiter: A string to split columns in the table by.
     :param bool ignore_lines: By default this function disregards empty lines at the end of the file. Set this to False to disable that.
-    
+
     :returns: A two-dimensional list of strings of the content in the file :code:`file_name`.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If :code:`file_name` is not a file.
@@ -851,30 +858,30 @@ def read_table(file_name, delimiter=',', ignore_lines=True):
 
 def scan_dir(folder=None, regex=None, recursive=True):
     """Scans the directory :code:`folder` recursively and returns all files and sub-folders as two lists.
-    
+
     :param str folder: A directory to scan. Defaults to the current working directory.
     :param str|re regex: If given, this function will only return files whose full paths match this regex. This has no effect on sub-folders.
     :param bool recursive: If False, this function will not scan sub-folders recursively. You might be better off using :code:`os.walk()` if you set this to False.
-    
+
     :returns: files and subfolders as two lists in that order. :code:`return files, subfolders`
-    
+
     :raises InvalidCharacterError: If :code:`folder` contains invalid characters.
     :raises FileExistsError: If :code:`folder` is not a folder.
     :raises FileNotFoundError: If :code:`folder` does not exist.
-    
-    :note: Any slashes (:code:`/`) in file paths will be replaced with backslashes (:code:`\\`) in the output, and this is what regexes match with.
-    
+
+    :note: Any slashes (:code:`/`) in file paths will be replaced with backslashes (:code:`\\\\`) in the output, and this is what regexes match with.
+
     :since 1.4:
     """
     if not folder:
         folder = os.getcwd()
     folder = folder.replace('/', '\\')
-    
+
     if recursive:
         debug('Scanning folder "{}" recursively', 2, folder, pre='[FUNC] ')
     else:
         debug('Scanning folder "{}"', 2, folder, pre='[FUNC] ')
-    
+
     def scan(folder, r):
         files, folders = [], []
         for f in os.scandir(folder):
@@ -883,12 +890,12 @@ def scan_dir(folder=None, regex=None, recursive=True):
             elif r == None or r.fullmatch(f.path):
                 files.append(f.path)
         return files, folders
-    
+
     if isinstance(regex, str):
         rext = re.compile(regex)
     else:
         rext = regex
-    
+
     if INVALID_CHARS_NO_SLASH.search(folder) is not None:
         raise InvalidCharacterError('Folder "' + folder + '" contains invalid characters.')
     if os.path.exists(folder):
@@ -904,35 +911,35 @@ def scan_dir(folder=None, regex=None, recursive=True):
             raise FileExistsError('"' + folder + '" is not a folder.')
     else:
         raise FileNotFoundError('Could not find folder "' + folder + '"')
-    
+
 
 def make_dir(folder, change=False, overwrite=False):
     """Makes a folder at :code:`folder`, along will all parent folders.
-    
+
     It will not raise a FileExistsError if the folder already exists, but will instead return False.
-    
+
     :param str folder: A string location to create a folder.
     :param bool change: If True, this function will set the new folder as the working directory.
     :param bool overwrite: If True, if there is a non-folder file in the same location as the folder being created, the folder will overwrite this file.
-    
+
     :raises EmptyLocationError: If :code:`folder` is an empty string.
     :raises InvalidCharacterError: If :code:`folder` contains invalid characters.
     :raises FileExistsError: If a non-folder file exists in the location given by :code:`folder` and overwrite is not set.
-    
+
     :returns: True on successful folder creation, False on failure.
-    
+
     :note: Even if folder creation fails, if :code:`change` is True, the working directory will still be changed to that folder.
     """
     if change:
         debug('Making folder at "{}" and setting it to working directory', 2, folder, pre='[FUNC] ')
     else:
         debug('Making folder at "{}"', 2, folder, pre='[FUNC] ')
-    
+
     if not folder:
         raise EmptyLocationError('Cannot create a folder with no name.')
     if INVALID_CHARS_NO_SLASH.search(folder) is not None:
         raise InvalidCharacterError('Folder "' + folder + '" contains invalid characters.')
-    
+
     r = True
     if os.path.exists(folder):
         if not os.path.isdir(folder):
@@ -945,21 +952,21 @@ def make_dir(folder, change=False, overwrite=False):
             r = False
     else:
         os.makedirs(folder)
-    
+
     if change:
         os.chdir(folder)
-    
+
     return r
 
 def delete(file_name):
     """Deletes the file or folder :code:`file_name` recursively.
-    
+
     It will not raise a FileNotFoundError if the file or folder doesn't exist, but will instead return False.
-    
+
     :param str file_name: A string location of a file or folder to delete.
-    
+
     :returns: True on successful deletion, False on failure.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     """
@@ -968,7 +975,7 @@ def delete(file_name):
         raise EmptyLocationError('Cannot delete a file or folder with no name.')
     if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
         raise InvalidCharacterError('Folder "' + file_name + '" contains invalid characters.')
-    
+
     if os.path.exists(file_name):
         if os.path.isdir(file_name):
             shutil.rmtree(file_name)
@@ -980,13 +987,13 @@ def delete(file_name):
 
 def write(file_name, contents='', force=False):
     """Writes :code:`contents` to the file :code:`file_name` in utf-8.
-    
+
     If the parent directory of this file doesn't exist, it will be automatically created.
-    
+
     :param str file_name: The location/name of a file in the local file system.
     :param str|[str,....] contents: Contents to write to the file :code:`file_name`. If this is an Iterable (and not a string), each item in this will be written to the file :code:`file_name` as a separate line split by line feed (:code:`\\n`) characters.
     :param bool force: If True, if there is a non-writable file (like a directory) in the same location as the file being written to, the function will overwrite this file.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
@@ -1004,14 +1011,14 @@ def write(file_name, contents='', force=False):
                 os.unlink(file_name)
         else:
             raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
-    
+
     if isinstance(contents, bytes):
         output = contents.decode('utf-8')
     elif not isinstance(contents, str) and isinstance(contents, Iterable):
         output = '\n'.join(contents)
     else:
         output = contents
-    
+
     global TABULATION
     TABULATION += 1
     try:
@@ -1025,15 +1032,15 @@ def write(file_name, contents='', force=False):
 
 def write_line(file_name, line='', force=False):
     """Append :code:`line` to the file :code:`file_name`.
-    
+
     If the parent directory of this file doesn't exist, it will be automatically created.
-    
+
     A line feed (:code:`\\n`) character is written after :code:`line`.
-    
+
     :param str file_name: The location/name of a file in the local file system.
     :param str line: A line to write to the file :code:`file_name`.
     :param bool force: If True, if there is a non-writable file (like a directory) in the same location as the file being written to, the function will overwrite this file.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
@@ -1051,7 +1058,7 @@ def write_line(file_name, line='', force=False):
                 os.unlink(file_name)
         else:
             raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
-    
+
     global TABULATION
     TABULATION += 1
     try:
@@ -1065,16 +1072,16 @@ def write_line(file_name, line='', force=False):
 
 def write_table(file_name, table, delimiter=',', force=False):
     """Writes the two-dimensional list :code:`table` to the file :code:`file_name`.
-    
+
     If the parent directory of this file doesn't exist, it will be automatically created.
-    
+
     Rows are joined by a line feed (:code:`\\n`) character, and columns are joined by :code:`delimiter`.
-    
+
     :param str file_name: The location/name of a file in the local file system.
     :param [[str,....],....] table: A two-dimensional list of strings to format and write to the file :code:`file_name`.
     :param str delimiter: A string to join columns in the table by.
     :param bool force: If True, if there is a non-writable file (like a directory) in the same location as the file being written to, the function will overwrite this file.
-    
+
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
@@ -1092,7 +1099,7 @@ def write_table(file_name, table, delimiter=',', force=False):
                 os.unlink(file_name)
         else:
             raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
-    
+
     global TABULATION
     TABULATION += 1
     try:
@@ -1106,24 +1113,24 @@ def write_table(file_name, table, delimiter=',', force=False):
 
 def replace(files, old, new, regex=None, ignore_errs=True):
     """Replaces all instances of :code:`old` with :code:`new` in :code:`files`.
-    
+
     :param [str,....]|str files: A string or list of strings pointing to files to have their contents changed.
     :param str|re old: A regex or string to replace. If this is a string, it will not be treated as a regex. Use :code:`re.compile()` to pass in a regex object.
     :param str new: A string of text to replace with.
     :param str|re regex: If given, this function will only replace in files whose full paths match this regex. It must be a real regex (i.e., you can't use "*" in place of ".*")!
     :param bool ignore_errs: If False, this function will throw an error at the end if :code:`files` had invalid files.
-    
+
     :raises: A bulk ValueError if :code:`files` has any invalid files and :code:`ignore_errs` is False. Errors will be thrown at the end of the function after everything that could be replaced was replaced.
-    
+
     :since 1.4:
     """
     if isinstance(files, str):
         file_names = [files]
     else:
         file_names = files
-    
+
     debug('Replacing contents in {} files', 2, len(file_names), pre='[FUNC] ')
-    
+
     errs = []
     global DEBUG_LEVEL, TABULATION
     temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, 0
@@ -1132,7 +1139,7 @@ def replace(files, old, new, regex=None, ignore_errs=True):
             rext = re.compile(regex)
         else:
             rext = regex
-        
+
         for file_name in file_names:
             if rext != None and not rext.fullmatch(file_name):
                 continue
@@ -1150,7 +1157,7 @@ def replace(files, old, new, regex=None, ignore_errs=True):
                 errs.append(e)
     finally:
         DEBUG_LEVEL = temp_debug
-    
+
     if errs:
         msg = '{} files had problems'.format(len(errs))
         if ignore_errs:
@@ -1164,13 +1171,13 @@ def replace(files, old, new, regex=None, ignore_errs=True):
 
 def hash256(obj):
     """Serializes :code:`obj` and then returns a sha256 HASH object of it.
-    
+
     Two objects that yield the same bytes representation will yield the same hash.
-    
+
     :param obj: An object to hash.
-    
+
     :returns: A sha256 HASH object of :code:`obj`.
-    
+
     :seealso: Python's `hashlib <https://docs.python.org/3/library/hashlib.html>`_ library. The object returned is the same object created by :code:`hashlib.sha256()`.
     """
     debug('Hashing object', 2)
@@ -1180,13 +1187,13 @@ def hash256(obj):
 
 def hash(obj):
     """Serializes :code:`obj` and then gets a four-byte integer representation of those bytes with the first four bytes of it's sha256.
-    
+
     This function is meant to replace the default python :code:`hash()` function because it does not rely on the object's id.
-    
+
     :param obj: An object to hash.
-    
+
     :returns: A four-byte integer representation of :code:`obj`.
-    
+
     :seealso: :func:`hash256`
     """
     debug('Quick-hashing object', 2)
@@ -1194,9 +1201,9 @@ def hash(obj):
 
 def clear_save(loc=''):
     """Deletes the "c-info.tmp" file generated by :func:`curate()` and :func:`curate_regex()` in the current working directory or :code:`loc`.
-    
+
     :param str loc: *Added in 1.3*: An optional location to clear the save file in. If not set, the directory will be the current working directory.
-    
+
     It will not raise a FileNotFoundError if it doesn't exist. Returns True on success, and False on failure.
     """
     if loc:
@@ -1217,7 +1224,7 @@ def clear_save(loc=''):
 
 def curate(items, curation_class, use_title=False, save=False, ignore_errs=False, overwrite=False, validate=1):
     """Curates form a list of urls given by :code:`items` with a sub-class of :class:`Curation` specified by :code:`curation_class`.
-    
+
     :param items [str|(str,dict),....]: normally a list of string urls of webpages to curate from, but if you put a tuple with 2 items in the place of any string, the first item in the tuple will be treated as the url, and the second item will be treated as a dictionary of arguments passed to an instance of :code:`curation_class` along with the url. You can mix tuples and strings.
     :param class curation_class: A sub-class of :class:`Curation` to create curations from. Note that this must be the *class* and not an object created from the class.
     :param bool use_title: If True, each curation folder will be generated with the title of the curation instead of its id.
@@ -1225,9 +1232,9 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
     :param bool ignore_errs: If True, any error that a curation raises will be ignored and the curation will be skipped. Any failed items will be returned as a list of 3-length tuples at the end of the function with the item, the error, and a dictionary of additional arguments that were passed in.
     :param bool overwrite: If True, this method will mix and overwrite files in existing curation folders instead of making the folder "Curation (2)", "Curation (3)", etc.
     :param int validate: *Added in 1.3*: Mode to validate each curation to make sure it has proper metadata. 0 means do not validate, 1 (default) means flexibly validate, and 2 means rigidly validate. See :func:`Curation.get_errors()`. Invalid curations will not raise any errors and will be skipped; however, if ignore_errs is True, the curation will be returned with an :class:`InvalidMetadataError` in the list at the end of the function.
-    
+
     :returns: None or a list of tuples including failed urls, errors, and data passed in. The format for this is `[(str,Exception,dict),...]`
-    
+
     :raises ValueError: If :code:`items` is empty.
     :raises TypeError: *Added in 1.3*: If :code:`curation_class` is not a subclass of :class:`Curation`.
     """
@@ -1236,7 +1243,7 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
         raise ValueError('Items list is empty.')
     if not issubclass(curation_class, Curation):
         raise TypeError('Class "' + curation_class.__name__ + '" is not a subclass of fpclib.Curation')
-    
+
     debug('Curating {} urls with class "{}"', 1, len(items), curation_class.__name__, pre='[FUNC] ')
     global TABULATION
     TABULATION += 1
@@ -1257,20 +1264,20 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
         else:
             i = 0
             errs = []
-        
+
         count = len(items)
         while i < count:
             if isave:
                 with open('c-info.tmp', 'wb') as temp:
                     temp.write(sid)
                     pickle.dump((i, errs), temp)
-            
+
             item = items[i]
             if isinstance(item, tuple):
                 (item, data) = item
             else:
                 data = {}
-            
+
             debug('Curating index {}, "{}"', 1, i, item)
             TABULATION += 1
             try:
@@ -1292,12 +1299,12 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
                 errs.append((item, e, data))
             finally:
                 TABULATION -= 1
-            
+
             i += 1
-        
+
         if isave:
             clear_save()
-        
+
         if ignore_errs:
             return errs
     finally:
@@ -1305,9 +1312,9 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
 
 def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, overwrite=False, validate=1):
     """Curates from a list of urls given by :code:`items` with a list of :code:`links`.
-    
+
     :see: :func:`curate()`
-    
+
     :param [str|(str,dict),....] items: A list of urls of webpages with games/animations to curate.
     :param [(str|re,class),....] links: A list of tuples containing a regex and a sub-class of :class:`Curation`. The function will search the url of each item for each of the regexes using :code:`re.search()`, and the first match will decide which sub-class gets used. If there are no matches, the curation would be skipped. A good example of the :code:`links` variable is something like :code:`[('newgrounds\\.com', NewgroundsCuration), ('kongregate\\.com', KongregateCuration)]`. Regexes can be strings or a :code:`re` object.
     :param bool use_title: Specifies whether or not to use the title or id of a curation for its folder.
@@ -1315,9 +1322,9 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
     :param bool ignore_errs: Specifies whether or not to ignore errors and return them at the end of the function.
     :param bool overwrite: Whether or not to mix new curations with older folders with the same name.
     :param int validate: *Added in 1.3*: Mode to validate each curation to make sure it has proper metadata.
-    
+
     :returns: None or a list of tuples including failed urls, errors, and data passed in. The format for this is `[(str,Exception,dict),...]`
-    
+
     :raises ValueError: If :code:`items` or :code:`links` is empty.
     """
     isave = save
@@ -1325,11 +1332,11 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
         raise ValueError('Items list is empty.')
     if not links:
         raise ValueError('Regex-curation links list is empty.')
-    
+
     debug('Curating {} urls with {} links', 1, len(items), len(links), pre='[FUNC] ')
     global TABULATION
     TABULATION += 1
-    
+
     try:
         rlinks = []
         for i in range(len(links)):
@@ -1341,12 +1348,12 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
                     rlinks.append(link)
             else:
                 debug('Link {} class "{}" is not a subclass of fpclib.Curation, skipping it', 1, i, pre='[WARN] ')
-        
+
         if not rlinks:
             raise ValueError('Regex-curation links list has no valid entries.')
-        
+
         debug('{}/{} are valid links', 1, len(rlinks), len(links))
-        
+
         if isave:
             sid = hash256(items).digest()
             try:
@@ -1363,20 +1370,20 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
         else:
             i = 0
             errs = []
-        
+
         count = len(items)
         while i < count:
             if isave:
                 with open('c-info.tmp', 'wb') as temp:
                     temp.write(sid)
                     pickle.dump((i, errs), temp)
-            
+
             item = items[i]
             if not isinstance(item, str) and isinstance(item, Iterable):
                 (item, data) = item
             else:
                 data = {}
-            
+
             for link in rlinks:
                 if re.search(link[0], item) is not None:
                     debug('Curating index {}, "{}", with class "{}"', 1, i, item, link[1].__name__)
@@ -1404,10 +1411,10 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
             else:
                 debug('Skipping index {}, "{}", no regex-matches found', 1, i, item, link[1].__name__)
             i += 1
-        
+
         if isave:
             clear_save()
-        
+
         if ignore_errs:
             return errs
     finally:
@@ -1415,44 +1422,44 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
 
 def load(curation):
     """Loads the curation in the folder :code:`curation` into :class:`Curation` object using ruamel.yaml.
-    
+
     :param str curation: A string pointing to the location of a folder where a curation is stored.
-    
+
     :returns: A :class:`Curation` object created with the metadata of the curation in the folder :code:`curation`.
-    
+
     :note: The curation at :code:`curation` curation must be using the yaml curation format.
-    
+
     :raises InvalidCharacterError: If :code:`curation` has invalid characters.
     :raises FileNotFoundError: If the folder given is not a valid curation.
     """
     debug('Loading curation in folder "{}"', 2, curation)
-    
+
     data = yaml.round_trip_load(read(os.path.join(curation, 'meta.yaml')))
     c = Curation()
     c.meta = dict(data)
     c.meta['Additional Applications'] = dict(c.meta['Additional Applications'])
     for app in c.meta['Additional Applications']:
         c.meta['Additional Applications'][app] = dict(c.meta['Additional Applications'][app])
-    
+
     folder = curation.replace('\\', '/')
     if '/' in folder:
         folder = folder[folder.rfind('/'):]
     if UUID.fullmatch(folder):
         c.id = folder
-    
+
     return c
 
 class Curation:
     """This is the base class for every kind of curation. If you want a good tutorial on how to use this class, see :doc:`The Basics </basics>`. Extend this class to redefine it's methods. Constructor:
-    
+
     Accepts a single :class:`Curation` object as an argument or arguments in the same format as :func:`Curation.set_meta()`. The new curation will first have it's metadata, logo, screenshot, added args, and id deep-copied from :code:`curation`'s first if it's available, then have that data modified with :code:`kwargs` if available. This curation object will be linked to that curation object.
-        
+
     :raises TypeError: If :code:`curation` is not an instance of :class:`Curation`.
     """
-    
+
     RESERVED_APPS = {'extras', 'message'}
     """A set containing all of the reserved headings that cannot be used in additional applications. The check is case-insensitive, hence they are lowercase."""
-    
+
     ARGS = {
         'title': 'Title',
         'name': 'Title',
@@ -1501,9 +1508,9 @@ class Curation:
         'cnotes': 'Curation Notes'
     }
     """A dictionary containing mappings for the arguments in :func:`Curation.set_meta()` and :func:`Curation.get_meta()` to the :attr:`Curation.meta` dictonary.
-        
+
     Here's a table of what each argument maps to:
-    
+
     ==================== ======================================
     Meta Tag             Args
     ==================== ======================================
@@ -1528,10 +1535,10 @@ class Curation:
     Original Description originalDescription, description, desc
     Curation Notes       curationNotes, cnotes
     ==================== ======================================
-    
+
     You can find the description of each of these tags on the `Curation Format <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Metadata>`_ page on the Flashpoint wiki.
     """
-    
+
     def __init__(self, curation=None, **kwargs):
         if not curation:
             self.meta = {
@@ -1560,12 +1567,12 @@ class Curation:
             """A dictionary containing all metadata for the curation. While you can modify it directly, it is recommended that you use :func:`Curation.set_meta()` and :func:`Curation.get_meta()` instead."""
             self.args = {}
             """A dictionary containing all arguments passed in through :func:`Curation.set_meta()` that do not map to any metadata. You can use this to pass in extra information that you want to use in :func:`Curation.parse()` or other methods for custom classes."""
-            
+
             self.logo = None
             """A url pointing to an image to be used as the logo for this curation. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will."""
             self.ss = None
             """A url pointing to an image to be used as the screenshot for this curation. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will."""
-            
+
             self.id = str(uuid.uuid4())
             """A string UUID identifying this curation. By default this is the name of the folder the curation will be saved to when :func:`Curation.save()` is called. You can re-generate an id by using :func:`Curation.new_id()`."""
         elif isinstance(curation, Curation):
@@ -1577,22 +1584,22 @@ class Curation:
         else:
             raise TypeError('curation object given is not an instance of fpclib.Curation')
         debug('Created new curation object {}', 2, str(self))
-        
+
         global DEBUG_LEVEL
         temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, 0
         try:
             self.set_meta(**kwargs)
         finally:
             DEBUG_LEVEL = temp_debug
-    
+
     def new_id(self):
-        """Generate a new uuid for this curation. 
-        
+        """Generate a new uuid for this curation.
+
         :see: :attr:`Curation.id`
         """
         debug('Regenerating id for curation {}', 2, str(self), pre='[FUNC] ')
         self.id = str(uuid.uuid4())
-    
+
     def __setattr__(self, name, value):
         if name in Curation.ARGS:
             if value == '':
@@ -1601,20 +1608,20 @@ class Curation:
                 self.meta[Curation.ARGS[name]] = value
         else:
             object.__setattr__(self, name, value)
-    
+
     def __getattr__(self, name):
         if name in Curation.ARGS:
             return self.meta[Curation.ARGS[name]]
-        
+
         raise AttributeError
-    
+
     def set_meta(self, **kwargs):
         """Set the metadata with :code:`kwargs`. This method does not do error checking.
-        
+
         :since 1.5: You can also just set the metadata directly through the curation instead; e.g., :code:`curation.title = 'Title Goes Here'`
-        
+
         :param ** kwargs: A list of arguments to set the metadata with. To see what you can use for :code:`kwargs`, see :attr:`Curation.ARGS`. Any value passed in that is not in :attr:`Curation.ARGS` will still be stored and can be retrieved through :func:`Curation.get_meta()`.
-        
+
         :note: For example, to set the title of a curation you would use :code:`curation.set_meta(title='Title Goes Here')`
         """
         for arg in kwargs:
@@ -1625,14 +1632,14 @@ class Curation:
                     self.meta[Curation.ARGS[arg]] = kwargs[arg]
             else:
                 self.args[arg] = kwargs[arg]
-    
+
     def get_meta(self, key):
-        """Get the metadata/args referenced by :code:`key`. 
-        
+        """Get the metadata/args referenced by :code:`key`.
+
         :since 1.5: You can also just get the metadata directly through the curation instead; e.g., :code:`myVar = curation.title`
-        
+
         :param str key: The name of an argument to get the value of. You can either use the keys referenced by :attr:`Curation.ARGS` or the name of the argument you passed in through :func:`Curation.set_meta()`.
-        
+
         :returns: The meta referenced by :code:`key`, the data associated with it, or None if it hasn't been set.
         """
         try:
@@ -1642,18 +1649,18 @@ class Curation:
                 return self.args[key]
         except KeyError:
             return None
-    
+
     def add_app(self, heading, launch, path=FLASH):
         """Add an additional application. To add extras or a message, use :func:`Curation.add_ext()` and :func:`Curation.add_msg()` respectively.
-        
+
         :param str heading: The name of the additional application.
         :param str launch: The name of the launch command for the additional application.
         :param str path: The application path for the additional application. Defaults to :data:`FLASH`.
-        
+
         :seealso: The `Additional Applications <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Appendix_II:_Additional_Applications>`_ section of the Curation Format page.
-        
+
         :note: Trying to add an additional app with a heading that already exists will result in replacing it.
-        
+
         :raises ValueError: If :code:`heading` is in :attr:`Curation.RESERVED_APPS`.
         """
         debug('Adding app "{}" to curation {}', 2, heading, str(self), pre='[FUNC] ')
@@ -1663,66 +1670,66 @@ class Curation:
             'Application Path': path,
             'Launch Command': launch
         }
-    
+
     def add_ext(self, folder):
         """Add extras from folder.
-        
+
         :param str folder: The name of the folder the extras are located in.
-        
+
         :seealso: The `Extras <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Extras>`_ section of the Curation Format page.
-        
+
         :note: Calling this method more than once will replace the current extras."""
         debug('Adding extras folder "{}" to curation {}', 2, folder, str(self), pre='[FUNC] ')
         self.meta['Additional Applications']['Extras'] = folder
-        
+
     def add_msg(self, message):
         """Add message.
-        
+
         :param str message: The message to add to this curation.
-        
+
         :seealso: The `Messages <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Messages>`_ section of the Curation Format page.
-        
+
         :note: Calling this method more than once will replace the current message.
         """
         debug('Adding message to curation {}', 2, str(self), pre='[FUNC] ')
         self.meta['Additional Applications']['Message'] = message
-        
+
     def del_app(self, heading):
         """Delete an additional application, extras, or message.
-        
+
         :param str heading: The name of the additional application to delete. Use "Extras" or "Message" to delete an extras or message.
-        
+
         :raises KeyError: If the app doesn't exist.
         """
         debug('Deleting app "{}" from curation {}', 2, heading, str(self), pre='[FUNC] ')
         del self.meta['Additional Applications'][heading]
-    
+
     def get_yaml(self):
         """Use ruamel.yaml to parse :attr:`Curation.meta` into a string.
-        
+
         :returns: A yaml string with the formatted metadata.
         """
         return yaml.round_trip_dump(self.meta)
-    
+
     def soupify(self):
         """Get's the relevant BeautifulSoup object of this curation to pass to :func:`Curation.parse()`.
-        
+
         This method's sole purpose is to make it possible to overwrite the process for getting the soup object for a particular url. This is useful in case certain websites have special protection preventing you from downloading pages too fast.
-        
+
         :returns: :func:`get_soup()` with the :code:`source` part of the metadata as it's parameter.
         """
         return get_soup(self.meta['Source'])
-    
+
     def parse(self, soup):
         """Parse for metadata with a soup object provided by :func:`Curation.soupify()`. By default this method does nothing and must be overwritten to give it functionality.
-        
+
         :see: :func:`Curation.save()`.
         """
         pass
-    
+
     def get_files(self):
         """Download/Create all necessary content files for this curation. By default this method downloads the file linked by all launch commands and creates all the directories necessary for them to be in. It will not raise any errors if downloading fails.
-        
+
         :see: :func:`Curation.save()`.
         """
         apps = self.meta['Additional Applications']
@@ -1730,32 +1737,32 @@ class Curation:
         if self.meta['Launch Command'] is not None:
             files.append(self.meta['Launch Command'])
         download_all(files, ignore_errs=True)
-    
+
     def save_image(self, url, file_name):
         """Download the image from :code:`url` and save it to :code:`file_name` as a PNG file; this method is primarily used for downloading logos and screenshots. It may be overwriten to add custom image-downloading abilities, but by default it just calls the :func:`download_image()` function.
-        
+
         :param str url: The url location of the image to download.
         :param str file_name: The location/name of the file to save to.
-        
+
         :see: :func:`Curation.save()`.
         """
         download_image(url, name=file_name)
-    
+
     def save(self, use_title=False, overwrite=False, parse=False, validate=0, save_items=EVERYTHING):
         """Save the curation to a folder with the name of :attr:`Curation.id`. Consecutive calls to this method will not overwrite the previous folder, but will instead save it as "Curation (2)", "Curation (3)", etc.
-        
+
         :param str use_title: If True, the folder will be generated with the title of the curation instead of its id.
         :param bool overwrite: If True, this method will mix and overwrite files in existing curation folders instead of making the folder "Curation (2)", "Curation (3)", etc.
         :param bool parse: *Added in 1.3*: If True, this function will call :func:`Curation.parse()` before saving metadata.
         :param int validate: *Added in 1.3*: Mode to validate this curation's metadata with. 0 (default) means do not validate, 1 means flexibly validate, and 2 means rigidly validate.
         :param int save_items: Flags determining what items to save as part of this curation. By default this is :data:`EVERYTHING`. If you wanted to save only the meta and logo, for example, use :code:`save_items=META|LOGO`.
-        
+
         :raises InvalidMetadataError: *Added in 1.3*: If this curation has invalid metadata and :code:`validate` is set to 1 or higher.
-        
+
         :see: :data:`EVERYTHING` and the surrounding constants, along with :func:`get_errors()`
-        
+
         The process of this method is as follows:
-        
+
         #. Create a BeautifulSoup object with :func:`Curation.soupify()`.
         #. Call method :func:`Curation.parse()` with the soup object just created.
         #. *New in 1.3*: Validate this curation's metadata with :func:`Curation.get_errors()` if :code:`validate` is 1 or higher. Raise an error if it's incorrect.
@@ -1764,7 +1771,7 @@ class Curation:
         #. Create "content" folder and set it to the working directory.
         #. Call method :func:`Curation.get_files()` to get all files necessary for the curation.
         #. Reset working directory.
-        
+
         You may overwrite any of these methods to allow for custom usability.
         """
         debug('Saving curation {}', 2, str(self), pre='[FUNC] ')
@@ -1779,13 +1786,13 @@ class Curation:
                     self.parse(self.soupify())
                 finally:
                     TABULATION -= 1
-            
+
             c_errs = []
             if validate > 0:
                 c_errs = self.get_errors(not(validate & 1))
             if c_errs:
                 raise InvalidMetadataError('invalid metadata:\n  ' + '\n  '.join(c_errs))
-            
+
             if use_title:
                 title = self.meta['Title']
                 if not title:
@@ -1799,13 +1806,13 @@ class Curation:
                 name = folder
                 while os.path.exists(folder):
                     number += 1
-                    folder = name + ' (' + str(number) + ')' 
-            
+                    folder = name + ' (' + str(number) + ')'
+
             make_dir(folder, True, True)
-            
+
             if save_items & META:
                 write('meta.yaml', self.get_yaml(), True)
-            
+
             if save_items & LOGO:
                 debug('Downloading logo', 2)
                 TABULATION += 1
@@ -1814,7 +1821,7 @@ class Curation:
                         self.save_image(self.logo, 'logo.png')
                 finally:
                     TABULATION -= 1
-            
+
             if save_items & SS:
                 debug('Downloading screenshot', 2)
                 TABULATION += 1
@@ -1823,7 +1830,7 @@ class Curation:
                         self.save_image(self.ss, 'ss.png')
                 finally:
                     TABULATION -= 1
-            
+
             if save_items & CONTENT:
                 make_dir('content', True)
                 TABULATION += 1
@@ -1831,20 +1838,20 @@ class Curation:
                     self.get_files()
                 finally:
                     TABULATION -= 1
-            
+
         finally:
             TABULATION -= 1
             os.chdir(cwd)
-    
+
     def get_errors(self, rigid=False):
         """Validate this curation to see if it's metadata is correct.
-        
+
         :param bool rigid: If True, this function will make sure this Curation's metadata is in order with the `Curation Format`_ page. By default, this function checks everything except Tags, Platform, and Application Path. Note that rigid checking will call :func:`update()` if it has not been called already or failed previously.
-        
+
         :seealso: :func:`Curation.check_source()`
-        
+
         :returns: A list of problems with this curation as strings. If there are no errors with this curation, an empty list will be returned.
-        
+
         :since 1.3:
         """
         debug('Validating curation {}', 2, str(self), pre='[FUNC] ')
@@ -1855,7 +1862,7 @@ class Curation:
             # Get updated platforms and tags if necessary
             if rigid and (not TAGS or not PLATFORMS):
                 update()
-            
+
             # Check Title
             if not self.meta['Title']:
                 errors.append(('Title: missing'))
@@ -1869,7 +1876,7 @@ class Curation:
                     tags = tags.split('; ')
                 elif not isinstance(tags, list):
                     tags = [str(tags)]
-                
+
                 vtags = TAGS.copy()
                 wtags = []
                 for tag in tags:
@@ -1877,7 +1884,7 @@ class Curation:
                         vtags.remove(tag)
                     else:
                         wtags.append(tag)
-                
+
                 if wtags:
                     errors.append('Tags: unknown/duplicate value(s) "' + '", "'.join(wtags) + '"')
             # Check Play Mode
@@ -1886,7 +1893,7 @@ class Curation:
                 modes = modes.split('; ')
             elif not isinstance(modes, list):
                 modes = [str(modes)]
-            
+
             vmodes = PLAY_MODES.copy()
             wmodes = []
             for mode in modes:
@@ -1894,7 +1901,7 @@ class Curation:
                     vmodes.remove(mode)
                 else:
                     wmodes.append(mode)
-            
+
             if wmodes:
                 errors.append('Play Mode: invalid/duplicate value(s) "' + '", "'.join(wmodes) + '"')
             # Check Status
@@ -1903,7 +1910,7 @@ class Curation:
                 status = '; '.join(status)
             elif not isinstance(status, str):
                 status = str(status)
-            
+
             if status not in STATUSES:
                 errors.append('Status: invalid value(s)')
             # Check Release Date
@@ -1916,7 +1923,7 @@ class Curation:
                 langs = langs.split('; ')
             elif not isinstance(langs, list):
                 langs = [str(langs)]
-            
+
             vlangs = LANGUAGES.copy()
             wlangs = []
             for lang in langs:
@@ -1924,7 +1931,7 @@ class Curation:
                     vlangs.remove(lang)
                 else:
                     wlangs.append(lang)
-            
+
             if wlangs:
                 errors.append('Languages: unknown/duplicate value(s) "' + '", "'.join(wlangs) + '"')
             # Check Extreme
@@ -1968,12 +1975,12 @@ class Curation:
         finally:
             TABULATION -= 1
         return errors
-    
+
     def check_source(self):
         """Validates this curation's current source. Called by :func:`Curation.get_errors()`.
-        
+
         :returns: A string of the source's current problem or None if there is no problem.
-        
+
         :since 1.3:
         """
         source = self.meta['Source']
@@ -1981,7 +1988,7 @@ class Curation:
             return 'missing'
         elif normalize(source, False, True, True) != source:
             return 'formatted incorrectly. You should use full, proper urls'
-        
+
         return None
 
 class TestCuration(Curation):
@@ -1991,7 +1998,7 @@ class TestCuration(Curation):
             url='https://www.newgrounds.com/portal/view/218014',
             title='Interactive Buddy',
             tags=['Simulation', 'Toy'],
-            dev='Shock Value', 
+            dev='Shock Value',
             pub='Newgrounds',
             ver='1.01',
             date='2005-02-08',
@@ -2006,7 +2013,7 @@ class TestCuration(Curation):
 
 class BrokenCuration(Curation):
     """An extension of :class:`Curation` that has literally everything wrong with it when parsed.
-    
+
     :since 1.3:
     """
     def parse(self, soup):
@@ -2032,7 +2039,7 @@ class BrokenCuration(Curation):
             self.add_app('Kongregate v1.02', 'https://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380')
         finally:
             TABULATION -= 1
-    
+
     def get_errors(self, rigid=True):
         errs = super().get_errors(rigid)
         global TABULATION
@@ -2045,39 +2052,39 @@ class BrokenCuration(Curation):
 
 class DateParser:
     """Initialize a regex-powered date parser that gets initialized with a specific format and can parse any date into the proper iso format. It does not check that the date is a real date. The constructor takes a string :code:`format` specifying a regex to search for in future parsed strings. Note that the regex is case insensitive. Use these macros in the format string to specify parts of the date:
-        
+
     "<y>" for year number to match - replaced with the capture group "(?P<year>\d{4})",
     "<m>" for month to match - replaced with the capture group "(?P<month>\d{1,3}|[A-Za-z]+)", and
     "<d>" for day to match - replaced with the capture group "(?P<day>\d{1,3})"
-    
+
     Month and day are optional, though using day requires using month. Note that the year, month, and day are automatically padded to the right number of zeros (4, 2, 2) automatically.
-    
+
     If the macros don't quite work for you, feel free to use named capture groups and the callbacks "year", "month", and "day", which are called on the respective matched parts of a parsed string to turn it into the right number format to use in the returned string. If the "month" callback is not set, it defaults to :func:`DateParser.get_month`.
-    
+
     :param str format: A string containing a regex and macros specifying how to parse strings.
     :param func year: A function to turn the matched "year" part of a parsed date into the right number format.
     :param func month: A function to turn the matched "month" part of a parsed date into the right number format.
     :param func day: A function to turn the matched "day" part of a parsed date into the right number format.
-    
+
     :raises ValueError: if the given format does not contain a "year" named group/macro or contains a "day" named group/macro without the "month" named group/macro.
-    
+
     :since 1.6:
     """
-    
+
     def __init__(self, format, year=None, month=None, day=None):
         text = format.\
             replace("<y>", r"(?P<year>\d{4})").\
             replace("<m>", r"(?P<month>\d{1,3}|[A-Za-z]+)").\
             replace("<d>", r"(?P<day>\d{1,3})")
-        
+
         if "(?P<year>" not in text or ("(?P<month>" not in text and "(?P<day>" in text):
             raise ValueError("The given format is invalid")
-        
+
         self.format = re.compile(text, re.I)
         self.year = year
         self.month = month or DateParser.get_month
         self.day = day
-    
+
     def get_month(s):
         """The default method called to turn the matched "month" part of a parsed date into the right number format. It tries to to find the first three characters of the string put into uppercase in :data:`fpclib.MONTHS`, then just returns :code:`s` if it fails."""
         if len(s) < 3: return s
@@ -2085,33 +2092,33 @@ class DateParser:
             return MONTHS[s[:3].upper()]
         except KeyError:
             return s
-    
+
     def parse(self, s):
         """Uses this date format object to parse the given string :code:`s` into a proper iso date.
-        
+
         :param str s: A string to parse for a date.
-        
+
         :returns: An iso date parsed from string :code:`s`
-        
+
         :raises ValueError: if no date in :code:`s` could be found.
         """
         match = self.format.search(s)
         if not match: raise ValueError(f'No date in "{s}"')
-        
+
         y = match["year"]
         if not y: raise ValueError(f'No year in "{s}"')
         try: m = match["month"]
         except IndexError: m = None
         try: d = match["day"]
         except IndexError: d = None
-        
+
         if d and not m: raise ValueError(f'Day but no month in "{s}"')
-        
+
         if self.year:
             year = self.year(y).zfill(4)
         else:
             year = y.zfill(4)
-        
+
         if m:
             if self.month:
                 month = "-" + self.month(m).zfill(2)
@@ -2119,7 +2126,7 @@ class DateParser:
                 month = "-" + m.zfill(2)
         else:
             month = ""
-        
+
         if d:
             if self.day:
                 day = "-" + self.day(d).zfill(2)
@@ -2127,7 +2134,7 @@ class DateParser:
                 day = "-" + d.zfill(2)
         else:
             day = ""
-        
+
         return year + month + day
 
 DP_US = DateParser(r"<m>(\s*.??<d>\w*)?,?\s*.??<y>")
