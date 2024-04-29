@@ -71,7 +71,7 @@ Usage
 
 fpclib is available on pypi or pip; however, it requires a specific version of ruamel.yaml in order to run.
 
-It is recommended that you install fpclib with poetry (`poetry add fpclib`) or something like pipx (`pipx install fpclib`) to run it properly.
+It is recommended that you install fpclib with poetry (:code:`poetry add fpclib`) or something like pipx (:code:`pipx install fpclib`) to run it properly.
 
 License
 =======
