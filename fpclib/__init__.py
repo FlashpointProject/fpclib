@@ -13,6 +13,7 @@ import uuid
 import pickle
 import stat
 import shutil
+import datetime
 
 INVALID_CHARS = re.compile(r'(?<!^\w)[/<>:\"\\\|\?\*\x00-\x1F]')
 """A compiled pattern that matches invalid charaters to be in a folder name.
@@ -714,6 +715,7 @@ def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
     try:
         rurl = normalize(url, True, True, True)
         with requests.get(rurl, **kwargs) as response:
+            if response.status_code >= 400: raise ValueError("Bad response code")
             # Screw weird ascii pages
             soup = BeautifulSoup(response.content.decode("utf-8"), parser)
         return soup
@@ -725,12 +727,12 @@ def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
         TABULATION -= 1
 
 def get_fpdata(page, ignore_errs=True):
-    """Reads the Flashpoint online datahub at :code:`https://bluemaxima.org/flashpoint/datahub/{page}` and returns a list of possible values; you can use this to get the most up-to-date tags, platforms, games, or animations.
+    """Reads the Flashpoint online datahub at :code:`https://flashpointarchive.org/datahub/{page}` and returns a list of possible values; you can use this to get the most up-to-date tags and platforms. It will automatically check the web archive if the given wiki page is down.
 
-    :param str page: Can be "Platforms", "Tags", "Game_Master_List", "Animation_Master_List", or any other page on the datahub with tables in it.
+    :param str page: Can be "Platforms", "Tags", or any other page on the datahub with tables in it.
     :param bool ignore_errs: If False, instead of returning None on any errors, those errors will be raised.
 
-    :returns: A list of all Platforms, Tags, Games, Animations, etc. depending on each page.
+    :returns: A list of all Platforms, Tags, etc. depending on each page, or an empty list on failure.
 
     :since 1.3:
     """
@@ -738,8 +740,19 @@ def get_fpdata(page, ignore_errs=True):
     global TABULATION
     TABULATION += 1
     try:
-        soup = get_soup('https://bluemaxima.org/flashpoint/datahub/' + page, ignore_errs=False)
-
+        soup = None
+        url = 'https://flashpointarchive.org/datahub/' + page
+        rurl = url
+        timestamp = None
+        for i in range(4): # Try up to 4 times
+            try:
+                soup = get_soup(rurl, ignore_errs=False, timeout=5)
+                if soup and not soup.select_one("#cf-error-details"): break
+            except (ValueError, requests.ReadTimeout):
+                if timestamp: timestamp -= datetime.timedelta(days=2)
+                else: timestamp = datetime.datetime.now()
+                rurl = f'https://web.archive.org/web/{timestamp.year}{timestamp.month:02}{timestamp.day:02}id_/' + url
+        print(rurl)
         items = []
         i = 0
         if page == "Platforms": i = 1
@@ -763,7 +776,7 @@ def get_fpdata(page, ignore_errs=True):
         return items
     except Exception as e:
         if ignore_errs:
-            return None
+            return []
         else:
             raise e
     finally:
@@ -1536,7 +1549,7 @@ class Curation:
     Curation Notes       curationNotes, cnotes
     ==================== ======================================
 
-    You can find the description of each of these tags on the `Curation Format <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Metadata>`_ page on the Flashpoint wiki.
+    You can find the description of each of these tags on the `Curation Format <https://flashpointarchive.org/datahub/Curation_Format#Metadata>`_ page on the Flashpoint wiki.
     """
 
     def __init__(self, curation=None, **kwargs):
@@ -1657,7 +1670,7 @@ class Curation:
         :param str launch: The name of the launch command for the additional application.
         :param str path: The application path for the additional application. Defaults to :data:`FLASH`.
 
-        :seealso: The `Additional Applications <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Appendix_II:_Additional_Applications>`_ section of the Curation Format page.
+        :seealso: The `Additional Applications <https://flashpointarchive.org/datahub/Curation_Format#Appendix_II:_Additional_Applications>`_ section of the Curation Format page.
 
         :note: Trying to add an additional app with a heading that already exists will result in replacing it.
 
@@ -1676,7 +1689,7 @@ class Curation:
 
         :param str folder: The name of the folder the extras are located in.
 
-        :seealso: The `Extras <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Extras>`_ section of the Curation Format page.
+        :seealso: The `Extras <https://flashpointarchive.org/datahub/Curation_Format#Extras>`_ section of the Curation Format page.
 
         :note: Calling this method more than once will replace the current extras."""
         debug('Adding extras folder "{}" to curation {}', 2, folder, str(self), pre='[FUNC] ')
@@ -1687,7 +1700,7 @@ class Curation:
 
         :param str message: The message to add to this curation.
 
-        :seealso: The `Messages <https://bluemaxima.org/flashpoint/datahub/Curation_Format#Messages>`_ section of the Curation Format page.
+        :seealso: The `Messages <https://flashpointarchive.org/datahub/Curation_Format#Messages>`_ section of the Curation Format page.
 
         :note: Calling this method more than once will replace the current message.
         """

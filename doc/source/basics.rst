@@ -6,7 +6,7 @@ This is a basic tutorial on using fpclib to curate games for Flashpoint.
 
 If you've never coded in python before, you should check out the `official python tutorial <https://docs.python.org/3/tutorial/index.html>`_ page first.
 
-This tutorial assumes that you already know the basics of curating for Flashpoint. If you do not know how to curate games/animations for Flashpoint, please follow the `Curation Tutorial <https://bluemaxima.org/flashpoint/datahub/Curation_Tutorial>`_ before using fpclib.
+This tutorial assumes that you already know the basics of curating for Flashpoint. If you do not know how to curate games/animations for Flashpoint, please follow the `Curation Tutorial <https://flashpointarchive.org/datahub/Curation_Tutorial>`_ before using fpclib.
 
 .. contents:: Quick Links
    :local:
@@ -51,7 +51,7 @@ Internet
 --------
 
 .. autosummary::
-   
+
    download
    download_all
    download_image
@@ -64,7 +64,7 @@ File IO
 -------
 
 .. autosummary::
-   
+
    read
    read_lines
    read_table
@@ -82,7 +82,7 @@ Curating
 --------
 
 .. autosummary::
-   
+
    test
    update
    debug
@@ -103,14 +103,14 @@ Before curating entire lists of games/animations with fpclib, it's important to 
     curation = Curation(url='https://www.newgrounds.com/portal/view/218014')
     # Set the logo of the curation
     curation.logo = 'https://picon.ngfiles.com/218000/flash_218014_medium.gif'
-    
+
     # You can set metadata through the object directly or through the set_meta method
     curation.set_meta(title='Interactive Buddy', tags=['Simulation', 'Toy'])
     curation.set_meta(dev='Shock Value', pub='Wrong Publisher')
     curation.pub = 'Newgrounds'
     curation.ver = '1.01'
     curation.date = '2005-02-08'
-    
+
     # Add an additional app
     curation.set_meta(cmd='http://uploads.ungrounded.net/218000/218014_DAbuddy_latest.swf')
     curation.add_app('Kongregate v1.02', 'http://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380')
@@ -135,10 +135,10 @@ Editing Curations
 It's also possible to load and edit existing curations by using the :func:`fpclib.load()` function. Here's an example of that function in action::
 
     import fpclib
-    
+
     c = fpclib.Curation(url='https://www.newgrounds.com/portal/view/218014', title='Interactive Buddy', cmd='http://uploads.ungrounded.net/218000/218014_DAbuddy_latest.swf')
     c.save(True)
-    
+
     d = fpclib.load('Interactive Buddy')
     d.logo = 'https://picon.ngfiles.com/218000/flash_218014_medium.gif'
     d.add_app('Kongregate v1.02', 'http://chat.kongregate.com/gamez/0003/0303/live/ib2.swf?kongregate_game_version=1363985380')
