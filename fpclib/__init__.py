@@ -53,7 +53,7 @@ PROPER_PROTOCOL = re.compile(r'^[a-zA-Z]+://[^/]')
 EXTENSION = re.compile(r'\.[^/\\]+$')
 """A compiled pattern that matches file extensions.
 
-:code:`re.compile(r'\.[^/\\]+$')`
+:code:`re.compile(r'\\.[^/\\]+$')`
 """
 UUID = re.compile(r'[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}')
 """A compiled pattern that matches uuids.
@@ -395,14 +395,14 @@ def test():
         bc = BrokenCuration()
         bc.parse(None)
         assert len(bc.get_errors()) == 13
+        print('\nTesting finished successfully.')
     except KeyboardInterrupt:
-        pass
+        print('\nTesting interrupted.')
     except:
-        raise AssertionError('The test has failed. Be wary when using this program.')
+        raise AssertionError('The test has failed. Be wary when using this library.')
     finally:
         if temp_debug is not None:
             DEBUG_LEVEL = temp_debug
-    print('\nTesting finished successfully.')
 
 def update():
     """Initializes or updates variables that are generated from online. The only ones are :data:`PLATFORMS` and :data:`TAGS`.
@@ -796,15 +796,16 @@ def read(file_name):
     :raises InvalidFileError: If :code:`file_name` is not a file.
     :raises FileNotFoundError: If :code:`file_name` cannot be found.
     """
-    debug('Reading file "{}"', 2, file_name, pre='[FUNC] ')
-    if not file_name:
+    fname = str(file_name)
+    debug('Reading file "{}"', 2, fname, pre='[FUNC] ')
+    if not fname:
         raise EmptyLocationError('Cannot read a file with no name.')
-    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
-        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
-    if os.path.exists(file_name) and not os.path.isfile(file_name):
-        raise InvalidFileError('"' + file_name + '" is not a file and cannot be read from.')
+    if INVALID_CHARS_NO_SLASH.search(fname) is not None:
+        raise InvalidCharacterError('File name "' + fname + '" contains invalid characters.')
+    if os.path.exists(fname) and not os.path.isfile(fname):
+        raise InvalidFileError('"' + fname + '" is not a file and cannot be read from.')
 
-    with codecs.open(file_name, 'r', 'utf-8') as file:
+    with codecs.open(fname, 'r', 'utf-8') as file:
         contents = file.read()
     return contents
 
@@ -823,15 +824,16 @@ def read_lines(file_name, ignore_lines=True):
     :raises InvalidFileError: If :code:`file_name` is not a file.
     :raises FileNotFoundError: If :code:`file_name` cannot be found.
     """
-    debug('Reading file "{}" into lines', 2, file_name, pre='[FUNC] ')
-    if not file_name:
+    fname = str(file_name)
+    debug('Reading file "{}" into lines', 2, fname, pre='[FUNC] ')
+    if not fname:
         raise EmptyLocationError('Cannot read a file with no name.')
-    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
-        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
-    if os.path.exists(file_name) and not os.path.isfile(file_name):
-        raise InvalidFileError('"' + file_name + '" is not a file and cannot be read from.')
+    if INVALID_CHARS_NO_SLASH.search(fname) is not None:
+        raise InvalidCharacterError('File name "' + fname + '" contains invalid characters.')
+    if os.path.exists(fname) and not os.path.isfile(fname):
+        raise InvalidFileError('"' + fname + '" is not a file and cannot be read from.')
 
-    with codecs.open(file_name, 'r', 'utf-8') as file:
+    with codecs.open(fname, 'r', 'utf-8') as file:
         lines = file.read().replace('\r\n', '\n').replace('\r', '\n').split('\n')
     if ignore_lines:
         i = len(lines) - 1
@@ -858,16 +860,62 @@ def read_table(file_name, delimiter=',', ignore_lines=True):
     :raises InvalidFileError: If :code:`file_name` is not a file.
     :raises FileNotFoundError: If :code:`file_name` cannot be found.
     """
-    debug('Reading file "{}" into table', 2, file_name, pre='[FUNC] ')
+    fname = str(file_name)
+    debug('Reading file "{}" into table', 2, fname, pre='[FUNC] ')
     global DEBUG_LEVEL, TABULATION
     temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, 0
     TABULATION += 1
     try:
-        output = [line.split(delimiter) for line in read_lines(file_name, ignore_lines)]
+        output = [line.split(delimiter) for line in read_lines(fname, ignore_lines)]
     finally:
         TABULATION -= 1
         DEBUG_LEVEL = temp_debug
     return output
+
+
+def read_config(config="clients.txt", paths=["."]):
+    """Searches for and reads/merges any config files in `paths`
+    
+    Config files support comments (lines starting with "#"), and data lines are in key=value format. Any whitespace before and after the = will be stripped.
+    
+    If no config files can be found, this function returns an empty dictionary.
+    
+    :param str config: The name of the config file to look for and read from.
+    :param [str,...] paths: A list of paths to look for config files in. Defaults to the current working directory.
+    
+    :returns: A dictionary of key=value pairs, or an empty dictionary if no config files can be found.
+    
+    :raises EmptyLocationError: If :code:`config` is an empty string.
+    :raises InvalidCharacterError: If :code:`config` or :data:`CONFIG_PATH` contains invalid characters.
+    :raises InvalidFileError: If any :code:`config` file is not a valid file.
+    
+    :since 1.9:
+    """
+    debug('Searching for config file "{}"', 2, config, pre='[FUNC] ')
+    global DEBUG_LEVEL, TABULATION
+    temp_debug, DEBUG_LEVEL = DEBUG_LEVEL, 0
+    TABULATION += 1
+    try:
+        if not config:
+            raise EmptyLocationError('Cannot find a config file with no name.')
+        config_data = {}
+        for path in reversed(paths):
+            try:
+                fname = os.path.join(path, config)
+                for rline in read_lines(fname):
+                    line = rline.strip()
+                    if not line or line[0] == "#": continue
+                    try:
+                        key, value = line.split("=", 1)
+                        config_data[key.strip()] = value.strip()
+                    except:
+                        debug('Config file "{}" contains invalue ', 1, fname, pre='[WARN] ')
+            except FileNotFoundError: pass
+        return config_data
+    finally:
+        TABULATION -= 1
+        DEBUG_LEVEL = temp_debug
+    
 
 def scan_dir(folder=None, regex=None, recursive=True):
     """Scans the directory :code:`folder` recursively and returns all files and sub-folders as two lists.
@@ -943,31 +991,32 @@ def make_dir(folder, change=False, overwrite=False):
 
     :note: Even if folder creation fails, if :code:`change` is True, the working directory will still be changed to that folder.
     """
+    sfolder = str(folder)
     if change:
-        debug('Making folder at "{}" and setting it to working directory', 2, folder, pre='[FUNC] ')
+        debug('Making folder at "{}" and setting it to working directory', 2, sfolder, pre='[FUNC] ')
     else:
-        debug('Making folder at "{}"', 2, folder, pre='[FUNC] ')
+        debug('Making folder at "{}"', 2, sfolder, pre='[FUNC] ')
 
-    if not folder:
+    if not sfolder:
         raise EmptyLocationError('Cannot create a folder with no name.')
-    if INVALID_CHARS_NO_SLASH.search(folder) is not None:
-        raise InvalidCharacterError('Folder "' + folder + '" contains invalid characters.')
+    if INVALID_CHARS_NO_SLASH.search(sfolder) is not None:
+        raise InvalidCharacterError('Folder "' + sfolder + '" contains invalid characters.')
 
     r = True
-    if os.path.exists(folder):
-        if not os.path.isdir(folder):
+    if os.path.exists(sfolder):
+        if not os.path.isdir(sfolder):
             if overwrite:
-                os.unlink(folder)
-                os.makedirs(folder)
+                os.unlink(sfolder)
+                os.makedirs(sfolder)
             else:
-                raise FileExistsError('Cannot create the folder "' + folder + '" because a non-folder file is there. Use argument "overwrite=True" to overwrite.')
+                raise FileExistsError('Cannot create the folder "' + sfolder + '" because a non-folder file is there. Use argument "overwrite=True" to overwrite.')
         else:
             r = False
     else:
-        os.makedirs(folder)
+        os.makedirs(sfolder)
 
     if change:
-        os.chdir(folder)
+        os.chdir(sfolder)
 
     return r
 
@@ -983,17 +1032,18 @@ def delete(file_name):
     :raises EmptyLocationError: If :code:`file_name` is an empty string.
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     """
-    debug('Deleting "{}"', 2, file_name, pre='[FUNC] ')
-    if not file_name:
+    fname = str(file_name)
+    debug('Deleting "{}"', 2, fname, pre='[FUNC] ')
+    if not fname:
         raise EmptyLocationError('Cannot delete a file or folder with no name.')
-    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
-        raise InvalidCharacterError('Folder "' + file_name + '" contains invalid characters.')
+    if INVALID_CHARS_NO_SLASH.search(fname) is not None:
+        raise InvalidCharacterError('Folder "' + fname + '" contains invalid characters.')
 
-    if os.path.exists(file_name):
-        if os.path.isdir(file_name):
-            shutil.rmtree(file_name)
+    if os.path.exists(fname):
+        if os.path.isdir(fname):
+            shutil.rmtree(fname)
         else:
-            os.unlink(file_name)
+            os.unlink(fname)
         return True
     else:
         return False
@@ -1011,19 +1061,20 @@ def write(file_name, contents='', force=False):
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
     """
-    debug('Writing contents to "{}"', 2, file_name, pre='[FUNC] ')
-    if not file_name:
+    fname = str(file_name)
+    debug('Writing contents to "{}"', 2, fname, pre='[FUNC] ')
+    if not fname:
         raise EmptyLocationError('Cannot write to a file with no name.')
-    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
-        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
-    if os.path.exists(file_name) and not os.path.isfile(file_name):
+    if INVALID_CHARS_NO_SLASH.search(fname) is not None:
+        raise InvalidCharacterError('File name "' + fname + '" contains invalid characters.')
+    if os.path.exists(fname) and not os.path.isfile(fname):
         if force:
-            if os.path.isdir(file_name):
-                shutil.rmtree(file_name)
+            if os.path.isdir(fname):
+                shutil.rmtree(fname)
             else:
-                os.unlink(file_name)
+                os.unlink(fname)
         else:
-            raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
+            raise InvalidFileError('"' + fname + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
 
     if isinstance(contents, bytes):
         output = contents.decode('utf-8')
@@ -1035,10 +1086,10 @@ def write(file_name, contents='', force=False):
     global TABULATION
     TABULATION += 1
     try:
-        folder = os.path.dirname(file_name)
+        folder = os.path.dirname(fname)
         if folder:
             make_dir(folder)
-        with codecs.open(file_name, 'w', 'utf-8') as file:
+        with codecs.open(fname, 'w', 'utf-8') as file:
             file.write(output)
     finally:
         TABULATION -= 1
@@ -1058,27 +1109,28 @@ def write_line(file_name, line='', force=False):
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
     """
-    debug('Writing line to "{}"', 2, file_name, pre='[FUNC] ')
-    if not file_name:
+    fname = str(file_name)
+    debug('Writing line to "{}"', 2, fname, pre='[FUNC] ')
+    if not fname:
         raise EmptyLocationError('Cannot write to a file with no name.')
-    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
-        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
-    if os.path.exists(file_name) and not os.path.isfile(file_name):
+    if INVALID_CHARS_NO_SLASH.search(fname) is not None:
+        raise InvalidCharacterError('File name "' + fname + '" contains invalid characters.')
+    if os.path.exists(fname) and not os.path.isfile(fname):
         if force:
-            if os.path.isdir(file_name):
-                shutil.rmtree(file_name)
+            if os.path.isdir(fname):
+                shutil.rmtree(fname)
             else:
-                os.unlink(file_name)
+                os.unlink(fname)
         else:
-            raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
+            raise InvalidFileError('"' + fname + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
 
     global TABULATION
     TABULATION += 1
     try:
-        folder = os.path.dirname(file_name)
+        folder = os.path.dirname(fname)
         if folder:
             make_dir(folder)
-        with codecs.open(file_name, 'a', 'utf-8') as file:
+        with codecs.open(fname, 'a', 'utf-8') as file:
             file.write(line + '\n')
     finally:
         TABULATION -= 1
@@ -1099,27 +1151,28 @@ def write_table(file_name, table, delimiter=',', force=False):
     :raises InvalidCharacterError: If :code:`file_name` contains invalid characters.
     :raises InvalidFileError: If a non-writable file exists in the location given by :code:`file_name` and :code:`force` is not set.
     """
-    debug('Writing table to "{}"', 2, file_name, pre='[FUNC] ')
-    if not file_name:
+    fname = str(file_name)
+    debug('Writing table to "{}"', 2, fname, pre='[FUNC] ')
+    if not fname:
         raise EmptyLocationError('Cannot write to a file with no name.')
-    if INVALID_CHARS_NO_SLASH.search(file_name) is not None:
-        raise InvalidCharacterError('File name "' + file_name + '" contains invalid characters.')
-    if os.path.exists(file_name) and not os.path.isfile(file_name):
+    if INVALID_CHARS_NO_SLASH.search(fname) is not None:
+        raise InvalidCharacterError('File name "' + fname + '" contains invalid characters.')
+    if os.path.exists(fname) and not os.path.isfile(fname):
         if force:
-            if os.path.isdir(file_name):
-                shutil.rmtree(file_name)
+            if os.path.isdir(fname):
+                shutil.rmtree(fname)
             else:
-                os.unlink(file_name)
+                os.unlink(fname)
         else:
-            raise InvalidFileError('"' + file_name + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
+            raise InvalidFileError('"' + fname + '" is not a file and cannot be written to. Use argument "force=True" to overwrite.')
 
     global TABULATION
     TABULATION += 1
     try:
-        folder = os.path.dirname(file_name)
+        folder = os.path.dirname(fname)
         if folder:
             make_dir(folder)
-        with codecs.open(file_name, 'w', 'utf-8') as file:
+        with codecs.open(fname, 'w', 'utf-8') as file:
             file.write('\n'.join([delimiter.join(line) for line in table]))
     finally:
         TABULATION -= 1
@@ -1235,7 +1288,7 @@ def clear_save(loc=''):
         DEBUG_LEVEL = temp_debug
     return output
 
-def curate(items, curation_class, use_title=False, save=False, ignore_errs=False, overwrite=False, validate=1):
+def curate(items, curation_class, use_title=False, save=False, ignore_errs=False, overwrite=False, validate=1, config=None, config_paths=["."]):
     """Curates form a list of urls given by :code:`items` with a sub-class of :class:`Curation` specified by :code:`curation_class`.
 
     :param items [str|(str,dict),....]: normally a list of string urls of webpages to curate from, but if you put a tuple with 2 items in the place of any string, the first item in the tuple will be treated as the url, and the second item will be treated as a dictionary of arguments passed to an instance of :code:`curation_class` along with the url. You can mix tuples and strings.
@@ -1245,6 +1298,8 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
     :param bool ignore_errs: If True, any error that a curation raises will be ignored and the curation will be skipped. Any failed items will be returned as a list of 3-length tuples at the end of the function with the item, the error, and a dictionary of additional arguments that were passed in.
     :param bool overwrite: If True, this method will mix and overwrite files in existing curation folders instead of making the folder "Curation (2)", "Curation (3)", etc.
     :param int validate: *Added in 1.3*: Mode to validate each curation to make sure it has proper metadata. 0 means do not validate, 1 (default) means flexibly validate, and 2 means rigidly validate. See :func:`Curation.get_errors()`. Invalid curations will not raise any errors and will be skipped; however, if ignore_errs is True, the curation will be returned with an :class:`InvalidMetadataError` in the list at the end of the function.
+    :param str config: *Added in 1.9*: If specified, `config` and `config_paths` will be given to :func:`fpclib.read_config()` and the return value will be given to curations in their "config" metadata value.
+    :param [str,...] config_paths: *Added in 1.9*: See `config`, given to :func:`fpclib.read_config()` to find config files.
 
     :returns: None or a list of tuples including failed urls, errors, and data passed in. The format for this is `[(str,Exception,dict),...]`
 
@@ -1267,23 +1322,25 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
                 with open('c-info.tmp', 'rb') as temp:
                     new_sid = temp.read(32)
                     if new_sid == sid:
-                        (i, errs) = pickle.load(temp)
+                        (i, errs, config_data) = pickle.load(temp)
                     else:
                         raise FileNotFoundError('Save file not found')
                 debug('Found "c-info.tmp" for items, starting at index {}', 1, i)
             except FileNotFoundError:
                 i = 0
                 errs = []
+                config_data = {} if config is None else fpclib.read_config(config, config_paths)
         else:
             i = 0
             errs = []
+            config_data = {} if config is None else fpclib.read_config(config, config_paths)
 
         count = len(items)
         while i < count:
             if isave:
                 with open('c-info.tmp', 'wb') as temp:
                     temp.write(sid)
-                    pickle.dump((i, errs), temp)
+                    pickle.dump((i, errs, config_data), temp)
 
             item = items[i]
             if isinstance(item, tuple):
@@ -1294,7 +1351,7 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
             debug('Curating index {}, "{}"', 1, i, item)
             TABULATION += 1
             try:
-                curation_class(url=item, **data).save(use_title, overwrite, True, validate=validate)
+                curation_class(url=item, config=config_data, **data).save(use_title, overwrite, True, validate=validate)
             except InvalidMetadataError as e:
                 debug('Skipping curation, {}', 1, str(e), pre='[WARN] ')
                 errs.append((item, e, data))
@@ -1373,23 +1430,25 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
                 with open('c-info.tmp', 'rb') as temp:
                     new_sid = temp.read(32)
                     if new_sid == sid:
-                        (i, errs) = pickle.load(temp)
+                        (i, errs, config_data) = pickle.load(temp)
                     else:
                         raise FileNotFoundError('Save file not found')
                 debug('Found "c-info.tmp" for items, starting at index {}', 1, i)
             except FileNotFoundError:
                 i = 0
                 errs = []
+                config_data = {} if config is None else fpclib.read_config(config, config_paths)
         else:
             i = 0
             errs = []
+            config_data = {} if config is None else fpclib.read_config(config, config_paths)
 
         count = len(items)
         while i < count:
             if isave:
                 with open('c-info.tmp', 'wb') as temp:
                     temp.write(sid)
-                    pickle.dump((i, errs), temp)
+                    pickle.dump((i, errs, config_data), temp)
 
             item = items[i]
             if not isinstance(item, str) and isinstance(item, Iterable):
@@ -1402,7 +1461,7 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
                     debug('Curating index {}, "{}", with class "{}"', 1, i, item, link[1].__name__)
                     TABULATION += 1
                     try:
-                        link[1](url=item, **data).save(use_title, overwrite, True, validate=validate)
+                        link[1](url=item, config=config_data, **data).save(use_title, overwrite, True, validate=validate)
                     except InvalidMetadataError as e:
                         debug('Skipping curation, {}', 1, str(e), pre='[WARN] ')
                         errs.append((item, e, data))
@@ -2066,9 +2125,9 @@ class BrokenCuration(Curation):
 class DateParser:
     """Initialize a regex-powered date parser that gets initialized with a specific format and can parse any date into the proper iso format. It does not check that the date is a real date. The constructor takes a string :code:`format` specifying a regex to search for in future parsed strings. Note that the regex is case insensitive. Use these macros in the format string to specify parts of the date:
 
-    "<y>" for year number to match - replaced with the capture group "(?P<year>\d{4})",
-    "<m>" for month to match - replaced with the capture group "(?P<month>\d{1,3}|[A-Za-z]+)", and
-    "<d>" for day to match - replaced with the capture group "(?P<day>\d{1,3})"
+    "<y>" for year number to match - replaced with the capture group "(?P<year>\\d{4})",
+    "<m>" for month to match - replaced with the capture group "(?P<month>\\d{1,3}|[A-Za-z]+)", and
+    "<d>" for day to match - replaced with the capture group "(?P<day>\\d{1,3})"
 
     Month and day are optional, though using day requires using month. Note that the year, month, and day are automatically padded to the right number of zeros (4, 2, 2) automatically.
 

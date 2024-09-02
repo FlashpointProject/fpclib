@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fpclib"
-version = "1.8.2"
+version = "1.9.0"
 description = "A powerful library for curating games for Flashpoint."
 authors = ["mathgeniuszach <huntingmanzach@gmail.com>"]
 license = "CC BY-NC-SA 4.0"
