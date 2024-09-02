@@ -462,12 +462,13 @@ def debug(text, mode, *items, pre='[INFO] '):
             finally:
                 DEBUG_LEVEL = temp_debug
 
-def download(url, loc='', name=None, **kwargs):
+def download(url, loc='', name=None, spoof=False, **kwargs):
     """Downloads the webpage or file at :code:`url` to the location :code:`loc`.
 
     :param str url: A url pointing to a file to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param str name: If specified, the file will be saved with this name instead of an automatically generated one.
+    :param bool spoof: *Added in 1.10*: If True, sets the referrer header to the url itself. Merges with any existing headers, but does not override them.
     :param ** kwargs: *Added in 1.2*: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
     """
     debug('Call to download "{}"', 2, url, pre='[FUNC] ')
@@ -494,7 +495,11 @@ def download(url, loc='', name=None, **kwargs):
         else:
             debug('Downloading "{}" from "{}"', 2, file_name, rurl)
 
-        with requests.get(rurl, **kwargs) as response:
+        headers = kwargs.get("headers", {})
+        if spoof and not ("referer" in headers or "Referer" in headers or "REFERER" in headers):
+            headers["referer"] = rurl
+
+        with requests.get(rurl, **kwargs, headers=headers or None) as response:
             if loc:
                 make_dir(loc)
                 file_name = os.path.join(loc, file_name)
@@ -503,7 +508,7 @@ def download(url, loc='', name=None, **kwargs):
     finally:
         TABULATION -= 1
 
-def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=False):
+def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=False, spoof=False, **kwargs):
     """Downloads a list of files with their website folder structure to the location :code:`loc`.
 
     For those that are familiar with cURLsDownloader, this function acts in a similar way. Invalid characters for a file/folder name will be replaced with "_", but "://" will be replaced with ".".
@@ -513,6 +518,8 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
     :param bool preserve: If True, any files from "web.archive.org" will stay in the "web.archive.org" folder. By default, files are moved to their original domains with any port numbers removed.
     :param bool keep_vars: If True, files will be saved with all urlvars intact in their file name. This prevents files such as "http://www.example.com/game.php?id=123" and "http://www.example.com/game.php?id=321" from overwriting each other. Question marks are replaced with "_".
     :param bool ignore_errs: If True, any errors will be ignored and returned as part of a tuple including the urls that failed alongside each error.
+    :param bool spoof: *Added in 1.10*: If True, sets the referrer header to the url itself. Merges with any existing headers, but does not override them.
+    :param ** kwargs: *Added in 1.10*: A collection of arguments to request with in all arguments. Same format as :code:`requests.get()`, but without the url parameter. Overwritten by arguments provided by `urls`.
 
     :returns: None or a list of tuples including failed urls and errors.
     """
@@ -557,10 +564,14 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
 
                 raw = INVALID_CHARS_NO_SLASH.sub('_', raw.replace('://', '.'))
 
+                headers = data.get("headers", kwargs.get("headers", {}))
+                if spoof and not ("referer" in headers or "Referer" in headers or "REFERER" in headers):
+                    headers["referer"] = rurl
+
                 debug('Downloading "{}" from "{}"', 2, raw, rurl)
                 TABULATION += 1
                 try:
-                    with requests.get(rurl, **data) as response:
+                    with requests.get(rurl, **kwargs, **data, headers=headers or None) as response:
                         make_dir(os.path.dirname(raw))
                         with open(raw, 'wb') as file:
                             file.write(response.content)
@@ -583,12 +594,13 @@ def download_all(urls, loc='', preserve=False, keep_vars=False, ignore_errs=Fals
     if ignore_errs:
         return errs
 
-def download_image(url, loc='', name=None, **kwargs):
+def download_image(url, loc='', name=None, spoof=False, **kwargs):
     """Downloads the image from :code:`url` to the location :code:`loc` as a PNG file.
 
     :param str url: A url pointing to the image to be downloaded.
     :param str loc: A folder to download to; leave blank for the current working directory. If the folder doesn't exist, it will be created automatically.
     :param str name: If specified, the file will be saved with this name instead of an automatically generated one.
+    :param bool spoof: *Added in 1.10*: If True, sets the referrer header to the url itself. Merges with any existing headers, but does not override them.
     :param ** kwargs: *Added in 1.2*: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
     """
     debug('Call to download image "{}"', 2, url, pre='[FUNC] ')
@@ -620,9 +632,13 @@ def download_image(url, loc='', name=None, **kwargs):
         else:
             debug('Downloading image "{}" from "{}"', 2, file_name, rurl)
 
+        headers = kwargs.get("headers", {})
+        if spoof and not ("referer" in headers or "Referer" in headers or "REFERER" in headers):
+            headers["referer"] = rurl
+
         TABULATION += 1
         try:
-            with requests.get(rurl, **kwargs) as response:
+            with requests.get(rurl, **kwargs, headers=headers) as response:
                 img = Image.open(BytesIO(response.content))
                 if loc:
                     make_dir(loc)
@@ -667,12 +683,13 @@ def normalize(url, preserve=True, keep_vars=False, keep_prot=False):
 
     return rurl
 
-def read_url(url, ignore_errs=True, content=False, **kwargs):
+def read_url(url, ignore_errs=True, content=False, spoof=False, **kwargs):
     """Reads the webpage or file at :code:`url` and returns its contents as a text string.
 
     :param str url: A string url of a webpage or file.
     :param bool ignore_errs: *Added in 1.3*: If False, instead of returning None on any errors, those errors will be raised.
     :param bool content: *Added in 1.3* If True, this function will return the contents of the webpage or file as a byte string instead of reading it as text (:code:`response.content` instead of :code:`response.text`).
+    :param bool spoof: *Added in 1.10*: If True, sets the referrer header to the url itself. Merges with any existing headers, but does not override them.
     :param ** kwargs: *Added in 1.2*: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
 
     :returns: The contents of the webpage at :code:`url` as a string or None if the url is blank.
@@ -684,7 +701,12 @@ def read_url(url, ignore_errs=True, content=False, **kwargs):
     TABULATION += 1
     try:
         rurl = normalize(url, True, True, True)
-        with requests.get(rurl, **kwargs) as response:
+
+        headers = kwargs.get("headers", {})
+        if spoof and not ("referer" in headers or "Referer" in headers or "REFERER" in headers):
+            headers["referer"] = rurl
+
+        with requests.get(rurl, **kwargs, headers=headers or None) as response:
             if content:
                 contents = response.content
             else:
@@ -697,12 +719,13 @@ def read_url(url, ignore_errs=True, content=False, **kwargs):
     finally:
         TABULATION -= 1
 
-def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
+def get_soup(url, parser='html.parser', ignore_errs=True, spoof=False, **kwargs):
     """Reads the webpage at :code:`url` and creates a BeautifulSoup object with it.
 
     :param str url: A string url of a webpage.
     :param str parser: The BeautifulSoup parser to use.
     :param bool ignore_errs: *Added in 1.3*: If False, instead of returning None on any errors, those errors will be raised.
+    :param bool spoof: *Added in 1.10*: If True, sets the referrer header to the url itself. Merges with any existing headers, but does not override them.
     :param ** kwargs: *Added in 1.2*: A collection of arguments to request with. Same format as :code:`requests.get()`, but without the url parameter.
 
     :returns: A BeautifulSoup object created from :code:`url` or None if the url is blank or there was an error and :code:`ignore_errs` is True.
@@ -714,7 +737,12 @@ def get_soup(url, parser='html.parser', ignore_errs=True, **kwargs):
     TABULATION += 1
     try:
         rurl = normalize(url, True, True, True)
-        with requests.get(rurl, **kwargs) as response:
+
+        headers = kwargs.get("headers", {})
+        if spoof and not ("referer" in headers or "Referer" in headers or "REFERER" in headers):
+            headers["referer"] = rurl
+
+        with requests.get(rurl, **kwargs, headers=headers or None) as response:
             if response.status_code >= 400: raise ValueError("Bad response code")
             # Screw weird ascii pages
             soup = BeautifulSoup(response.content.decode("utf-8"), parser)
