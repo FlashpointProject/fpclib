@@ -875,20 +875,20 @@ def read_table(file_name, delimiter=',', ignore_lines=True):
 
 def read_config(config="clients.txt", paths=["."]):
     """Searches for and reads/merges any config files in `paths`
-    
+
     Config files support comments (lines starting with "#"), and data lines are in key=value format. Any whitespace before and after the = will be stripped.
-    
+
     If no config files can be found, this function returns an empty dictionary.
-    
+
     :param str config: The name of the config file to look for and read from.
     :param [str,...] paths: A list of paths to look for config files in. Defaults to the current working directory.
-    
+
     :returns: A dictionary of key=value pairs, or an empty dictionary if no config files can be found.
-    
+
     :raises EmptyLocationError: If :code:`config` is an empty string.
     :raises InvalidCharacterError: If :code:`config` or :data:`CONFIG_PATH` contains invalid characters.
     :raises InvalidFileError: If any :code:`config` file is not a valid file.
-    
+
     :since 1.9:
     """
     debug('Searching for config file "{}"', 2, config, pre='[FUNC] ')
@@ -915,7 +915,7 @@ def read_config(config="clients.txt", paths=["."]):
     finally:
         TABULATION -= 1
         DEBUG_LEVEL = temp_debug
-    
+
 
 def scan_dir(folder=None, regex=None, recursive=True):
     """Scans the directory :code:`folder` recursively and returns all files and sub-folders as two lists.
@@ -1329,11 +1329,11 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
             except FileNotFoundError:
                 i = 0
                 errs = []
-                config_data = {} if config is None else fpclib.read_config(config, config_paths)
+                config_data = {} if config is None else read_config(config, config_paths)
         else:
             i = 0
             errs = []
-            config_data = {} if config is None else fpclib.read_config(config, config_paths)
+            config_data = {} if config is None else read_config(config, config_paths)
 
         count = len(items)
         while i < count:
@@ -1380,7 +1380,7 @@ def curate(items, curation_class, use_title=False, save=False, ignore_errs=False
     finally:
         TABULATION -= 1
 
-def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, overwrite=False, validate=1):
+def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, overwrite=False, validate=1, config=None, config_paths=["."]):
     """Curates from a list of urls given by :code:`items` with a list of :code:`links`.
 
     :see: :func:`curate()`
@@ -1437,11 +1437,11 @@ def curate_regex(items, links, use_title=False, save=False, ignore_errs=False, o
             except FileNotFoundError:
                 i = 0
                 errs = []
-                config_data = {} if config is None else fpclib.read_config(config, config_paths)
+                config_data = {} if config is None else read_config(config, config_paths)
         else:
             i = 0
             errs = []
-            config_data = {} if config is None else fpclib.read_config(config, config_paths)
+            config_data = {} if config is None else read_config(config, config_paths)
 
         count = len(items)
         while i < count:
@@ -1611,7 +1611,7 @@ class Curation:
     You can find the description of each of these tags on the `Curation Format <https://flashpointarchive.org/datahub/Curation_Format#Metadata>`_ page on the Flashpoint wiki.
     """
 
-    def __init__(self, curation=None, **kwargs):
+    def __init__(self, curation=None, config={}, **kwargs):
         if not curation:
             self.meta = {
                 'Title': None,
@@ -1644,6 +1644,9 @@ class Curation:
             """A url pointing to an image to be used as the logo for this curation. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will."""
             self.ss = None
             """A url pointing to an image to be used as the screenshot for this curation. Any non-PNG files will be converted into PNG files when downloaded. You can modify it at will."""
+
+            self.config = config
+            """Config data that is passed in by :func:`fpclib.curate()` and :func:`fpclib.curate_regex()`"""
 
             self.id = str(uuid.uuid4())
             """A string UUID identifying this curation. By default this is the name of the folder the curation will be saved to when :func:`Curation.save()` is called. You can re-generate an id by using :func:`Curation.new_id()`."""
@@ -1682,10 +1685,13 @@ class Curation:
             object.__setattr__(self, name, value)
 
     def __getattr__(self, name):
-        if name in Curation.ARGS:
-            return self.meta[Curation.ARGS[name]]
-
-        raise AttributeError
+        try:
+            if name in Curation.ARGS:
+                return self.meta[Curation.ARGS[name]]
+            else:
+                return self.args[name]
+        except KeyError:
+            return object.__getattribute__(self, name)
 
     def set_meta(self, **kwargs):
         """Set the metadata with :code:`kwargs`. This method does not do error checking.
