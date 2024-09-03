@@ -958,13 +958,14 @@ def scan_dir(folder=None, regex=None, recursive=True):
     :raises FileExistsError: If :code:`folder` is not a folder.
     :raises FileNotFoundError: If :code:`folder` does not exist.
 
-    :note: Any slashes (:code:`/`) in file paths will be replaced with backslashes (:code:`\\\\`) in the output, and this is what regexes match with.
+    :note: On Windows, backslashes (:code:`\\\\`) will be replaced by slashes (:code:`/`), and this is what regexes match against.
 
     :since 1.4:
     """
     if not folder:
         folder = os.getcwd()
-    folder = folder.replace('/', '\\')
+    if os.name == "nt":
+        folder = folder.replace('\\', '/')
 
     if recursive:
         debug('Scanning folder "{}" recursively', 2, folder, pre='[FUNC] ')
